@@ -1,0 +1,21 @@
+[project]
+name = "store-of-seeds"
+version = "0.1.0"
+description = "Online store of seeds and equipment for growing microgreens"
+authors = [
+    {name = "Vladimir Bogdanov",email = "vld.bgdn@icloud.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "django (==5.2)",
+    "black (>=25.1.0,<26.0.0)"
+]
+
+[tool.poetry]
+package-mode = false
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,25 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: microgreens
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+  redis:
+    image: redis:7-alpine
+
+  celery:
+    build: .
+    command: celery -A config worker -l info
+    depends_on:
+      - db
+      - redis
