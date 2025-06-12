@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load static product_tags %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for image in product.images.all %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ product.name }}">
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+        <div class="row mt-2">
+            {% for image in product.images.all %}
+            <div class="col-3">
+                <a href="#" data-bs-target="#productCarousel" data-bs-slide-to="{{ forloop.counter0 }}">
+                    <img src="{{ image.image.url }}" class="img-thumbnail"
+                        style="height: 80px; width: 100%; object-fit: cover;">
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <h1>{{ product.name }}</h1>
+        <p class="text-muted">Артикул: {{ product.article }}</p>
+
+        {% if product.old_price %}
+        <p class="text-decoration-line-through text-muted">{{ product.old_price }} ₽</p>
+        {% endif %}
+        <h3 class="text-primary">{{ product.price }} ₽</h3>
+
+        {% if product.stock > 0 %}
+        <p class="text-success">В наличии: {{ product.stock }} шт.</p>
+        {% else %}
+        <p class="text-danger">Нет в наличии</p>
+        {% endif %}
+
+        {% if product.difficulty_level %}
+        <p>
+            <span class="badge bg-info text-dark">
+                Сложность выращивания: {{ product.difficulty_level|format_difficulty }}
+            </span>
+        </p>
+        {% endif %}
+
+        {% if product.germination_time %}
+        <p><strong>Срок прорастания:</strong> {{ product.germination_time }}</p>
+        {% endif %}
+
+        <form action="{% url 'cart:cart_add' product.id %}" method="post" class="mb-4">
+            {% csrf_token %}
+            <div class="input-group mb-3" style="max-width: 200px;">
+                <button class="btn btn-outline-secondary" type="button"
+                    onclick="this.parentNode.querySelector('input[type=number]').stepDown()">-</button>
+                <input type="number" class="form-control text-center" name="quantity" value="1" min="1"
+                    max="{{ product.stock }}">
+                <button class="btn btn-outline-secondary" type="button"
+                    onclick="this.parentNode.querySelector('input[type=number]').stepUp()">+</button>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg" {% if not product.stock %}disabled{% endif %}>
+                Добавить в корзину
+            </button>
+        </form>
+
+        <div class="card mb-3">
+            <div class="card-header">Краткое описание</div>
+            <div class="card-body">
+                {{ product.short_description|linebreaks }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <ul class="nav nav-tabs" id="productTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description"
+                    type="button" role="tab">
+                    Описание
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="characteristics-tab" data-bs-toggle="tab" data-bs-target="#characteristics"
+                    type="button" role="tab">
+                    Характеристики
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="growing-tab" data-bs-toggle="tab" data-bs-target="#growing" type="button"
+                    role="tab">
+                    Выращивание
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content p-3 border border-top-0 rounded-bottom">
+            <div class="tab-pane fade show active" id="description" role="tabpanel">
+                {{ product.full_description|linebreaks }}
+            </div>
+            <div class="tab-pane fade" id="characteristics" role="tabpanel">
+                {% if product.taste_characteristics %}
+                <h5>Вкусовые характеристики:</h5>
+                <p>{{ product.taste_characteristics|linebreaks }}</p>
+                {% endif %}
+
+                {% if product.benefits %}
+                <h5>Полезные свойства:</h5>
+                <p>{{ product.benefits|linebreaks }}</p>
+                {% endif %}
+
+                {% if product.recommended_substrate %}
+                <h5>Рекомендуемый субстрат:</h5>
+                <p>{{ product.recommended_substrate }}</p>
+                {% endif %}
+            </div>
+            <div class="tab-pane fade" id="growing" role="tabpanel">
+                {% if product.growing_instructions %}
+                <h5>Инструкция по выращиванию:</h5>
+                <p>{{ product.growing_instructions|linebreaks }}</p>
+                {% endif %}
+
+                {% if product.recommended_temperature %}
+                <h5>Рекомендуемая температура:</h5>
+                <p>{{ product.recommended_temperature }}</p>
+                {% endif %}
+
+                {% if product.harvest_dates %}
+                <h5>Сроки сбора урожая:</h5>
+                <p>{{ product.harvest_dates }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if related_products %}
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h3>Похожие товары</h3>
+        <div class="row">
+            {% for product in related_products %}
+            <div class="col-lg-3 col-md-4 col-6 mb-4">
+                <div class="card h-100">
+                    <a href="{% url 'products:product_detail' product.slug %}">
+                        {% with product.images.first as main_image %}
+                        {% if main_image %}
+                        <img src="{{ main_image.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                        {% else %}
+                        <img src="{% static 'images/placeholder.jpg' %}" class="card-img-top" alt="Placeholder">
+                        {% endif %}
+                        {% endwith %}
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'products:product_detail' product.slug %}" class="text-decoration-none">
+                                {{ product.name }}
+                            </a>
+                        </h5>
+                        <p class="card-text">{{ product.price }} ₽</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
