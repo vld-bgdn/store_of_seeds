@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ваш заказ #{{ order.id }}</title>
+</head>
+
+<body>
+    <h1>Спасибо за ваш заказ!</h1>
+    <p>Номер вашего заказа: <strong>{{ order.id }}</strong></p>
+
+    <h2>Детали заказа:</h2>
+    <table>
+        <tr>
+            <th>Товар</th>
+            <th>Количество</th>
+            <th>Цена</th>
+        </tr>
+        {% for item in order.items.all %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.total_price }} ₽</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"><strong>Доставка:</strong></td>
+            <td>{{ order.delivery_cost }} ₽</td>
+        </tr>
+        <tr>
+            <td colspan="2"><strong>Итого:</strong></td>
+            <td>{{ order.total_cost }} ₽</td>
+        </tr>
+    </table>
+
+    <h2>Контактная информация:</h2>
+    <p>Имя: {{ order.first_name }} {{ order.last_name }}</p>
+    <p>Email: {{ order.email }}</p>
+    <p>Телефон: {{ order.phone }}</p>
+
+    <p>Мы свяжемся с вами для подтверждения заказа.</p>
+</body>
+
+</html>

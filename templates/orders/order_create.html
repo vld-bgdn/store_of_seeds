@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Оформление заказа{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1 class="mb-4">Оформление заказа</h1>
+
+        <form method="post" id="orderForm">
+            {% csrf_token %}
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    Контактная информация
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Имя*</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Фамилия*</label>
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email*</label>
+                            {{ form.email }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Телефон*</label>
+                            {{ form.phone }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    Способ доставки
+                </div>
+                <div class="card-body">
+                    {{ form.delivery_method }}
+
+                    <div id="postFields" class="delivery-fields mt-3">
+                        <h5>Доставка Почтой России</h5>
+                        <p>Стоимость: 200 ₽</p>
+                        <div class="mb-3">
+                            <label class="form-label">Адрес*</label>
+                            {{ form.address }}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Индекс*</label>
+                                {{ form.postal_code }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Город*</label>
+                                {{ form.city }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Страна*</label>
+                                {{ form.country }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="cdekFields" class="delivery-fields mt-3" style="display: none;">
+                        <h5>Доставка СДЭК</h5>
+                        <div class="mb-3">
+                            <label class="form-label">Город*</label>
+                            <input type="text" class="form-control" id="cdekCity" name="cdek_city">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Пункт выдачи*</label>
+                            <select class="form-select" id="cdekPoint" name="cdek_point">
+                                <option value="">Выберите пункт выдачи</option>
+                            </select>
+                        </div>
+                        <p id="cdekCost">Стоимость: рассчитывается...</p>
+                    </div>
+
+                    <div id="pickupFields" class="delivery-fields mt-3" style="display: none;">
+                        <h5>Самовывоз</h5>
+                        <p>Адрес: г. Москва, ул. Примерная, 10</p>
+                        <p>Стоимость: бесплатно</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    Способ оплаты
+                </div>
+                <div class="card-body">
+                    {{ form.payment_method }}
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    Дополнительно
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ form.need_consultation }}
+                            <label class="form-check-label" for="{{ form.need_consultation.id_for_label }}">
+                                Нужна консультация по выращиванию
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Комментарий к заказу</label>
+                        {{ form.notes }}
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100">
+                Перейти к оплате
+            </button>
+        </form>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                Ваш заказ
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush mb-3">
+                    {% for item in cart %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ item.quantity }}x {{ item.product.name }}</span>
+                        <span>{{ item.total_price }} ₽</span>
+                    </li>
+                    {% endfor %}
+
+                    <li class="list-group-item d-flex justify-content-between">
+                        <strong>Доставка</strong>
+                        <span id="deliveryCostDisplay">0 ₽</span>
+                    </li>
+
+                    <li class="list-group-item d-flex justify-content-between">
+                        <strong>Итого</strong>
+                        <strong id="totalCostDisplay">{{ cart.get_total_price }} ₽</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/orders.js' %}"></script>
+{% endblock %}

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Order, OrderItem
+from django.utils.translation import gettext_lazy as _
 
 
 class OrderItemInline(admin.TabularInline):

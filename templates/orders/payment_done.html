@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Оплата завершена{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                Оплата успешно завершена
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Спасибо за ваш заказ!</h5>
+                <p class="card-text">
+                    Ваш заказ #{{ order.id }} был успешно оплачен.
+                    Мы отправили подтверждение на email {{ order.email }}.
+                </p>
+
+                {% if order.need_consultation %}
+                <div class="alert alert-info mt-4">
+                    <h5>Консультация по выращиванию</h5>
+                    <p>
+                        Наш специалист свяжется с вами в Telegram в течение 24 часов.
+                        Если у вас есть вопросы, вы можете написать нам в Telegram: @microgreens_support
+                    </p>
+                </div>
+                {% endif %}
+
+                <a href="{% url 'products:category_list' %}" class="btn btn-primary">
+                    Вернуться в магазин
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

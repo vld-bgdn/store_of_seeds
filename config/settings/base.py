@@ -118,3 +118,12 @@ EMAIL_USE_TLS = env("EMAIL_USE_TLS", default=False)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="webmaster@localhost")
+
+TELEGRAM_BOT_TOKEN = env("TELEGRAM_BOT_TOKEN", default="")
+TELEGRAM_CHAT_ID = env("TELEGRAM_CHAT_ID", default="")
+
+CDEK_ACCOUNT = env("CDEK_ACCOUNT", default="")
+CDEK_SECURE_PASSWORD = env("CDEK_SECURE_PASSWORD", default="")
+
+YANDEX_PAY_MERCHANT_ID = env("YANDEX_PAY_MERCHANT_ID", default="")
+YANDEX_PAY_SECRET_KEY = env("YANDEX_PAY_SECRET_KEY", default="")

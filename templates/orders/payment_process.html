@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Оплата заказа{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                Оплата заказа #{{ order.id }}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Сумма к оплате: {{ order.total_cost }} ₽</h5>
+                <p class="card-text">Выбранный способ оплаты: {{ order.get_payment_method_display }}</p>
+
+                {% if order.payment_method == 'yandex' %}
+                <div id="yandexPayButton" class="mb-4"></div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success btn-lg">
+                        Подтвердить оплату (тестовый режим)
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
