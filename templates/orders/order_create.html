@@ -1,3 +1,4 @@
+<!-- templates/orders/order_create.html -->
 {% extends "base.html" %}
 {% load static %}
 
@@ -137,8 +138,9 @@
                 Ваш заказ
             </div>
             <div class="card-body">
+                {% if cart_items %}
                 <ul class="list-group list-group-flush mb-3">
-                    {% for item in cart %}
+                    {% for item in cart_items %}
                     <li class="list-group-item d-flex justify-content-between">
                         <span>{{ item.quantity }}x {{ item.product.name }}</span>
                         <span>{{ item.total_price }} ₽</span>
@@ -152,9 +154,12 @@
 
                     <li class="list-group-item d-flex justify-content-between">
                         <strong>Итого</strong>
-                        <strong id="totalCostDisplay">{{ cart.get_total_price }} ₽</strong>
+                        <strong id="totalCostDisplay">{{ cart.total_price }} ₽</strong>
                     </li>
                 </ul>
+                {% else %}
+                <p class="text-muted">Ваша корзина пуста</p>
+                {% endif %}
             </div>
         </div>
     </div>
