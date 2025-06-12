@@ -33,13 +33,13 @@
                         <label class="form-label">Сложность выращивания</label>
                         <select class="form-select" name="difficulty">
                             <option value="">Все</option>
-                            <option value="easy" {% if request.GET.difficulty=='easy' %}selected{% endif %}>
+                            <option value="easy" {% if request.GET.difficulty == 'easy' %}selected{% endif %}>
                                 Легкая
                             </option>
-                            <option value="medium" {% if request.GET.difficulty=='medium' %}selected{% endif %}>
+                            <option value="medium" {% if request.GET.difficulty == 'medium' %}selected{% endif %}>
                                 Средняя
                             </option>
-                            <option value="hard" {% if request.GET.difficulty=='hard' %}selected{% endif %}>
+                            <option value="hard" {% if request.GET.difficulty == 'hard' %}selected{% endif %}>
                                 Сложная
                             </option>
                         </select>
@@ -115,7 +115,7 @@
             {% endfor %}
         </div>
 
-        {% include 'includes/_pagination.html' %}
+        {# {% include 'includes/_pagination.html' %} #}
 
         {% else %}
         <div class="alert alert-info">Товары не найдены</div>
