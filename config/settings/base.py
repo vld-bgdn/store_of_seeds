@@ -31,6 +31,9 @@ INSTALLED_APPS = [
     "apps.orders",
     "apps.blog",
     "apps.cart",
+    "apps.discounts",
+    "apps.reports",
+    "apps.pages",
 ]
 
 MIDDLEWARE = [
@@ -61,6 +64,155 @@ TEMPLATES = [
         },
     },
 ]
+
+CKEDITOR_5_CONFIGS = {
+    "default": {
+        "toolbar": [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "link",
+            "bulletedList",
+            "numberedList",
+            "blockQuote",
+            "imageUpload",
+            "undo",
+            "redo",
+        ],
+    },
+    "extends": {
+        "blockToolbar": [
+            "paragraph",
+            "heading1",
+            "heading2",
+            "heading3",
+            "|",
+            "bulletedList",
+            "numberedList",
+            "|",
+            "blockQuote",
+            "imageUpload",
+        ],
+        "toolbar": [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "link",
+            "underline",
+            "strikethrough",
+            "code",
+            "subscript",
+            "superscript",
+            "highlight",
+            "|",
+            "codeBlock",
+            "sourceEditing",
+            "|",
+            "bulletedList",
+            "numberedList",
+            "todoList",
+            "|",
+            "blockQuote",
+            "imageUpload",
+            "|",
+            "fontSize",
+            "fontFamily",
+            "fontColor",
+            "fontBackgroundColor",
+            "mediaEmbed",
+            "removeFormat",
+            "insertTable",
+            "undo",
+            "redo",
+        ],
+        "image": {
+            "toolbar": [
+                "imageTextAlternative",
+                "|",
+                "imageStyle:alignLeft",
+                "imageStyle:alignRight",
+                "imageStyle:alignCenter",
+                "imageStyle:side",
+                "|",
+                "toggleImageCaption",
+                "|",
+            ],
+            "styles": [
+                "full",
+                "side",
+                "alignLeft",
+                "alignRight",
+                "alignCenter",
+            ],
+        },
+        "table": {
+            "contentToolbar": [
+                "tableColumn",
+                "tableRow",
+                "mergeTableCells",
+                "tableProperties",
+                "tableCellProperties",
+            ],
+            "tableProperties": {
+                "borderColors": [
+                    {"color": "#cccccc"},
+                    {"color": "#999999"},
+                    {"color": "#666666"},
+                    {"color": "#333333"},
+                ],
+                "backgroundColors": [
+                    {"color": "#f8f9fa"},
+                    {"color": "#e9ecef"},
+                    {"color": "#dee2e6"},
+                    {"color": "#ced4da"},
+                ],
+            },
+            "tableCellProperties": {
+                "borderColors": [
+                    {"color": "#cccccc"},
+                    {"color": "#999999"},
+                    {"color": "#666666"},
+                    {"color": "#333333"},
+                ],
+                "backgroundColors": [
+                    {"color": "#f8f9fa"},
+                    {"color": "#e9ecef"},
+                    {"color": "#dee2e6"},
+                    {"color": "#ced4da"},
+                ],
+            },
+        },
+        "heading": {
+            "options": [
+                {
+                    "model": "paragraph",
+                    "title": "Paragraph",
+                    "class": "ck-heading_paragraph",
+                },
+                {
+                    "model": "heading1",
+                    "view": "h1",
+                    "title": "Heading 1",
+                    "class": "ck-heading_heading1",
+                },
+                {
+                    "model": "heading2",
+                    "view": "h2",
+                    "title": "Heading 2",
+                    "class": "ck-heading_heading2",
+                },
+                {
+                    "model": "heading3",
+                    "view": "h3",
+                    "title": "Heading 3",
+                    "class": "ck-heading_heading3",
+                },
+            ]
+        },
+    },
+}
 
 WSGI_APPLICATION = "config.wsgi.application"
 

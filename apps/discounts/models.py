@@ -1,0 +1,139 @@
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+from model_utils.models import TimeStampedModel
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+
+class PromoCode(TimeStampedModel):
+    """Promo code for discounts"""
+
+    class DiscountType(models.TextChoices):
+        PERCENT = "percent", _("Percentage")
+        FIXED = "fixed", _("Fixed amount")
+
+    code = models.CharField(_("code"), max_length=20, unique=True)
+    discount_type = models.CharField(
+        _("discount type"),
+        max_length=10,
+        choices=DiscountType.choices,
+        default=DiscountType.PERCENT,
+    )
+    discount_value = models.DecimalField(
+        _("discount value"),
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+    )
+    max_discount = models.DecimalField(
+        _("maximum discount"),
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        help_text=_("Maximum discount for percentage discounts"),
+    )
+    min_order_amount = models.DecimalField(
+        _("minimum order amount"),
+        max_digits=10,
+        decimal_places=2,
+        blank=True,
+        help_text=_("Minimum order amount to apply discount"),
+    )
+    valid_from = models.DateTimeField(_("valid from"))
+    valid_to = models.DateTimeField(_("valid to"))
+    active = models.BooleanField(_("active"), default=True)
+    max_uses = models.PositiveIntegerField(
+        _("maximum uses"),
+        blank=True,
+        help_text=_("Maximum number of times this code can be used"),
+    )
+    current_uses = models.PositiveIntegerField(_("current uses"), default=0)
+    for_all_users = models.BooleanField(_("for all users"), default=True)
+    for_first_order = models.BooleanField(_("for first order only"), default=False)
+
+    class Meta:
+        verbose_name = _("promo code")
+        verbose_name_plural = _("promo codes")
+        ordering = ["-created"]
+
+    def __str__(self):
+        return self.code
+
+    def is_valid(self, user=None, order_total=None):
+        """Check if promo code is valid"""
+        from django.utils import timezone
+
+        if not self.active:
+            return False
+
+        if timezone.now() < self.valid_from or timezone.now() > self.valid_to:
+            return False
+
+        if self.max_uses and self.current_uses >= self.max_uses:
+            return False
+
+        if (
+            order_total
+            and self.min_order_amount
+            and order_total < self.min_order_amount
+        ):
+            return False
+
+        if (
+            not self.for_all_users
+            and user
+            and not self.users.filter(id=user.id).exists()
+        ):
+            return False
+
+        if self.for_first_order and user and user.orders.exists():
+            return False
+
+        return True
+
+    def apply_discount(self, order_total):
+        """Apply discount to order total"""
+        if self.discount_type == self.DiscountType.PERCENT:
+            discount = order_total * (self.discount_value / 100)
+            if self.max_discount:
+                discount = min(discount, self.max_discount)
+            return discount
+        else:
+            return min(self.discount_value, order_total)
+
+
+class PromoCodeUse(TimeStampedModel):
+    """Track promo code usage"""
+
+    promo_code = models.ForeignKey(
+        PromoCode,
+        verbose_name=_("promo code"),
+        related_name="uses",
+        on_delete=models.CASCADE,
+    )
+    user = models.ForeignKey(
+        "users.User",
+        verbose_name=_("user"),
+        related_name="promo_code_uses",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    order = models.ForeignKey(
+        "orders.Order",
+        verbose_name=_("order"),
+        related_name="promo_code_uses",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    discount_amount = models.DecimalField(
+        _("discount amount"), max_digits=10, decimal_places=2
+    )
+
+    class Meta:
+        verbose_name = _("promo code use")
+        verbose_name_plural = _("promo code uses")
+        ordering = ["-created"]
+
+    def __str__(self):
+        return f"{self.promo_code.code} - {self.discount_amount}"

@@ -5,6 +5,10 @@ python manage.py makemigrations
 
 # If you want to be specific about the users app:
 python manage.py makemigrations users
+# If you want to be specific about the orders app:
+python manage.py makemigrations orders
+# If you want to be specific about the blog app:
+python manage.py makemigrations blog
 
 # Apply the migrations to create the database tables
 python manage.py migrate

@@ -89,6 +89,21 @@ class Order(TimeStampedModel):
     notes = models.TextField(_("notes"), blank=True)
     ip_address = models.GenericIPAddressField(_("IP address"), blank=True, null=True)
 
+    promo_code = models.ForeignKey(
+        "discounts.PromoCode",
+        verbose_name=_("promo code"),
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+    discount_amount = models.DecimalField(
+        _("discount amount"), max_digits=10, decimal_places=2, default=0
+    )
+
+    def calculate_total(self):
+        subtotal = sum(item.cost for item in self.items.all())
+        return subtotal - self.discount_amount + self.delivery_cost
+
     class Meta:
         verbose_name = _("order")
         verbose_name_plural = _("orders")

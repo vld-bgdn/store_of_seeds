@@ -1,0 +1,21 @@
+Dear {{ order.first_name }},
+
+The status of your order #{{ order.id }} has been updated to: {{ status }}
+
+{% if status == "Shipped" %}
+Your order has been shipped and is on its way to you.
+{% elif status == "Delivered" %}
+Your order has been delivered. Thank you for shopping with us!
+{% elif status == "Completed" %}
+Your order has been completed. We hope you enjoyed your purchase!
+{% endif %}
+
+Order details:
+{% for item in order.items.all %}
+- {{ item.quantity }}x {{ item.product.name }}: {{ item.total_price }} ₽
+{% endfor %}
+
+Total: {{ order.total_cost }} ₽
+
+Thank you,
+Microgreens Store Team

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Order #{{ order.id }} status update</title>
+</head>
+
+<body>
+    <h1>Order Status Update</h1>
+    <p>Dear {{ order.first_name }},</p>
+
+    <p>The status of your order <strong>#{{ order.id }}</strong> has been updated to: <strong>{{ status }}</strong></p>
+
+    {% if status == "Shipped" %}
+    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;">
+        <h3>Your order is on the way!</h3>
+        <p>Your order has been shipped and is coming to you.</p>
+    </div>
+    {% elif status == "Delivered" %}
+    <div style="background-color: #e8f5e9; padding: 15px; border-radius: 5px; margin: 15px 0;">
+        <h3>Your order has arrived!</h3>
+        <p>Your order has been delivered. We hope you enjoy your microgreens!</p>
+    </div>
+    {% elif status == "Completed" %}
+    <div style="background-color: #e3f2fd; padding: 15px; border-radius: 5px; margin: 15px 0;">
+        <h3>Order completed</h3>
+        <p>Your order has been successfully completed. Thank you for shopping with us!</p>
+    </div>
+    {% endif %}
+
+    <h2>Order Summary</h2>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead>
+            <tr style="background-color: #f8f9fa;">
+                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Product</th>
+                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Quantity</th>
+                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items.all %}
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.product.name }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.quantity }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.total_price }} ₽</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="2" style="padding: 10px; border: 1px solid #ddd; text-align: right;">
+                    <strong>Total:</strong></td>
+                <td style="padding: 10px; border: 1px solid #ddd;"><strong>{{ order.total_cost }} ₽</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>Thank you for shopping with us!</p>
+    <p><strong>Microgreens Store Team</strong></p>
+</body>
+
+</html>
