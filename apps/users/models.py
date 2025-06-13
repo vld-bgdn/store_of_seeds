@@ -41,8 +41,8 @@ class Profile(TimeStampedModel):
     email_confirmed = models.BooleanField(_("email confirmed"), default=False)
 
     class Meta:
-        verbose_name = _("profile")
-        verbose_name_plural = _("profiles")
+        verbose_name = _("Профиль")
+        verbose_name_plural = _("Профили")
 
     def __str__(self):
-        return f"{self.user}'s profile"
+        return f"Профиль пользователя {self.user}"

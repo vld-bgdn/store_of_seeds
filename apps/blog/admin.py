@@ -1,53 +1,71 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-# from .models import Article, ArticleCategory
-from .models import Article
+from .models import Article, ArticleCategory
 
 
-class ArticleInline(admin.StackedInline):
+class ArticleInline(
+    admin.TabularInline
+):  # Changed to TabularInline for better performance
     model = Article
     extra = 0
     fields = ["title", "slug", "is_published"]
     prepopulated_fields = {"slug": ("title",)}
+    readonly_fields = ["view_count"]
 
 
-# @admin.register(ArticleCategory)
-# class ArticleCategoryAdmin(admin.ModelAdmin):
-#     list_display = ["name", "slug", "article_count"]
-#     prepopulated_fields = {"slug": ("name",)}
-#     inlines = [ArticleInline]
+@admin.register(ArticleCategory)
+class ArticleCategoryAdmin(admin.ModelAdmin):
+    list_display = ["name", "slug", "article_count", "created"]
+    prepopulated_fields = {"slug": ("name",)}
+    inlines = [ArticleInline]
+    search_fields = ["name", "description"]
 
-#     def article_count(self, obj):
-#         return obj.article_set.count()
+    def article_count(self, obj):
+        return obj.articles.count()  # Using related_name "articles"
 
-#     article_count.short_description = _("Articles")
+    article_count.short_description = _("Articles")
 
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     list_display = [
         "title",
-        # "category",
+        "category",
         "author",
         "is_published",
         "published_at",
-        # "view_count",
+        "view_count",
     ]
-    # list_filter = ["category", "is_published", "published_at"]
-    list_filter = ["is_published", "published_at"]
-    search_fields = ["title", "content"]
+    list_filter = ["category", "is_published", "published_at", "author"]
+    search_fields = ["title", "content", "short_description"]
     prepopulated_fields = {"slug": ("title",)}
-    # readonly_fields = ["view_count", "created", "modified"]
-    readonly_fields = ["created", "modified"]
-    actions = ["publish_articles", "unpublish_articles"]  # List of action names
+    readonly_fields = ["view_count", "created", "modified"]
+    actions = ["publish_articles", "unpublish_articles"]
+
+    fieldsets = (
+        (None, {"fields": ("title", "slug", "author", "category")}),
+        (_("Content"), {"fields": ("short_description", "content", "image")}),
+        (_("Publishing"), {"fields": ("is_published", "published_at")}),
+        (_("Statistics"), {"fields": ("view_count",), "classes": ("collapse",)}),
+        (
+            _("Timestamps"),
+            {"fields": ("created", "modified"), "classes": ("collapse",)},
+        ),
+    )
 
     def publish_articles(self, request, queryset):
-        queryset.update(is_published=True)
+        updated = queryset.update(is_published=True)
+        self.message_user(
+            request, _("Successfully published {} articles.").format(updated)
+        )
 
     publish_articles.short_description = _("Publish selected articles")
 
     def unpublish_articles(self, request, queryset):
-        queryset.update(is_published=False)
+        updated = queryset.update(is_published=False)
+        self.message_user(
+            request, _("Successfully unpublished {} articles.").format(updated)
+        )
 
     unpublish_articles.short_description = _("Unpublish selected articles")

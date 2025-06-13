@@ -1,23 +1,27 @@
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel
 from django_ckeditor_5.fields import CKEditor5Field
 
 
-# class ArticleCategory(TimeStampedModel):
-#     """Category for blog articles"""
+class ArticleCategory(TimeStampedModel):
+    """Category for blog articles"""
 
-#     name = models.CharField(_("name"), max_length=100)
-#     slug = models.SlugField(_("slug"), max_length=100, unique=True)
-#     description = models.TextField(_("description"), blank=True)
+    name = models.CharField(_("name"), max_length=100)
+    slug = models.SlugField(_("slug"), max_length=100, unique=True)
+    description = models.TextField(_("description"), blank=True)
 
-#     class Meta:
-#         verbose_name = _("article category")
-#         verbose_name_plural = _("article categories")
-#         ordering = ["name"]
+    class Meta:
+        verbose_name = _("article category")
+        verbose_name_plural = _("article categories")
+        ordering = ["name"]
 
-#     def __str__(self):
-#         return self.name
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("blog:category_article_list", kwargs={"slug": self.slug})
 
 
 class Article(TimeStampedModel):
@@ -32,11 +36,20 @@ class Article(TimeStampedModel):
         null=True,
         blank=True,
     )
+    category = models.ForeignKey(
+        ArticleCategory,
+        verbose_name=_("category"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="articles",  # This allows reverse lookup
+    )
     content = CKEditor5Field(_("content"), config_name="extends")
     short_description = models.TextField(_("short description"), blank=True)
     is_published = models.BooleanField(_("is published"), default=False)
     published_at = models.DateTimeField(_("published at"), blank=True, null=True)
     image = models.ImageField(_("image"), upload_to="articles/", blank=True)
+    view_count = models.PositiveIntegerField(_("view count"), default=0)
 
     class Meta:
         verbose_name = _("article")
@@ -45,3 +58,11 @@ class Article(TimeStampedModel):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse("blog:article_detail", kwargs={"slug": self.slug})
+
+    def increment_view_count(self):
+        """Increment view count safely"""
+        self.view_count += 1
+        self.save(update_fields=["view_count"])

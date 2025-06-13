@@ -11,11 +11,10 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{% url 'blog:article_list' %}">Blog</a></li>
-                    <!-- {% if article.category %}
+                    {% if article.category %}
                     <li class="breadcrumb-item"><a
-                            href="{% url 'blog:category_article_list' article.category.slug %}">{{ article.category.name
-                            }}</a></li>
-                    {% endif %} -->
+                            href="{% url 'blog:category_article_list' article.category.slug %}">{{ article.category.name }}</a></li>
+                    {% endif %}
                     <li class="breadcrumb-item active" aria-current="page">{{ article.title }}</li>
                 </ol>
             </nav>
@@ -46,7 +45,7 @@
             </article>
 
             <div class="mt-5">
-                <h3>Related Articles</h3>
+                <h3>Похожие статьи</h3>
                 <div class="row">
                     {% for article in related_articles %}
                     <div class="col-md-6 mb-3">

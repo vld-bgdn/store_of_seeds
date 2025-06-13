@@ -51,8 +51,8 @@ class PromoCode(TimeStampedModel):
     for_first_order = models.BooleanField(_("for first order only"), default=False)
 
     class Meta:
-        verbose_name = _("promo code")
-        verbose_name_plural = _("promo codes")
+        verbose_name = _("Промо код")
+        verbose_name_plural = _("Промо коды")
         ordering = ["-created"]
 
     def __str__(self):
