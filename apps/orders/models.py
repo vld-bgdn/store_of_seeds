@@ -105,8 +105,8 @@ class Order(TimeStampedModel):
         return subtotal - self.discount_amount + self.delivery_cost
 
     class Meta:
-        verbose_name = _("order")
-        verbose_name_plural = _("orders")
+        verbose_name = _("Заказ")
+        verbose_name_plural = _("Заказы")
         ordering = ["-created"]
 
     def __str__(self):

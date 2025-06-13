@@ -131,8 +131,8 @@ class PromoCodeUse(TimeStampedModel):
     )
 
     class Meta:
-        verbose_name = _("promo code use")
-        verbose_name_plural = _("promo code uses")
+        verbose_name = _("Использование промо кода")
+        verbose_name_plural = _("Использование промо кодов")
         ordering = ["-created"]
 
     def __str__(self):

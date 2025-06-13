@@ -2,9 +2,9 @@ from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from .models import Report
 
-admin.site.site_header = "Microgreens Store Admin"
-admin.site.site_title = "Microgreens Store Admin Portal"
-admin.site.index_title = "Welcome to Microgreens Store Admin"
+admin.site.site_header = "Админка"
+admin.site.site_title = "Админка магазина микрозелени"
+admin.site.index_title = "Добро пожаловать в Админку магазина микрозелени"
 
 
 @admin.register(Report)

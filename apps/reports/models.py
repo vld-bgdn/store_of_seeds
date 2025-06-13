@@ -28,8 +28,8 @@ class Report(TimeStampedModel):
     is_ready = models.BooleanField(_("is ready"), default=False)
 
     class Meta:
-        verbose_name = _("report")
-        verbose_name_plural = _("reports")
+        verbose_name = _("Отчет")
+        verbose_name_plural = _("Отчеты")
         ordering = ["-created"]
 
     def __str__(self):

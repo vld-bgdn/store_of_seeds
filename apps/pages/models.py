@@ -19,8 +19,8 @@ class Page(TimeStampedModel):
     )
 
     class Meta:
-        verbose_name = _("page")
-        verbose_name_plural = _("pages")
+        verbose_name = _("Веб-страница")
+        verbose_name_plural = _("Веб-страницы")
         ordering = ["title"]
 
     def __str__(self):

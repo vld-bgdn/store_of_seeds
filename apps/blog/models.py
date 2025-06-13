@@ -13,8 +13,8 @@ class ArticleCategory(TimeStampedModel):
     description = models.TextField(_("description"), blank=True)
 
     class Meta:
-        verbose_name = _("article category")
-        verbose_name_plural = _("article categories")
+        verbose_name = _("Категория")
+        verbose_name_plural = _("Категории")
         ordering = ["name"]
 
     def __str__(self):
@@ -52,8 +52,8 @@ class Article(TimeStampedModel):
     view_count = models.PositiveIntegerField(_("view count"), default=0)
 
     class Meta:
-        verbose_name = _("article")
-        verbose_name_plural = _("articles")
+        verbose_name = _("Статья")
+        verbose_name_plural = _("Статьи")
         ordering = ["-published_at"]
 
     def __str__(self):

@@ -20,8 +20,8 @@ class Category(TimeStampedModel):
     image = models.ImageField(_("image"), upload_to="categories/", blank=True)
 
     class Meta:
-        verbose_name = _("category")
-        verbose_name_plural = _("categories")
+        verbose_name = _("Категория")
+        verbose_name_plural = _("Категории")
         ordering = ["name"]
 
     def __str__(self):
@@ -76,8 +76,8 @@ class Product(TimeStampedModel):
     harvest_dates = models.CharField(_("harvest dates"), max_length=100, blank=True)
 
     class Meta:
-        verbose_name = _("product")
-        verbose_name_plural = _("products")
+        verbose_name = _("Продукт")
+        verbose_name_plural = _("Продукты")
         ordering = ["name"]
 
     def __str__(self):
