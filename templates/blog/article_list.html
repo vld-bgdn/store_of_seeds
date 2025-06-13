@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Blog - Microgreens Store{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <h1 class="mb-4">Последние статьи</h1>
+
+            {% for article in articles %}
+            <div class="card mb-4">
+                {% if article.image %}
+                <img src="{{ article.image.url }}" class="card-img-top" alt="{{ article.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <a href="{% url 'blog:article_detail' article.slug %}" class="text-decoration-none">
+                            {{ article.title }}
+                        </a>
+                    </h2>
+                    <p class="text-muted">
+                        Опубликовано {{ article.published_at|date:"F j, Y" }} by {{ article.author }}
+                        <!-- {# {% if article.category %}
+                        in <a href="{% url 'blog:category_article_list' article.category.slug %}">{{
+                            article.category.name }}</a>
+                        {% endif %} #} -->
+                    </p>
+                    <p class="card-text">{{ article.short_description }}</p>
+                    <a href="{% url 'blog:article_detail' article.slug %}" class="btn btn-primary">
+                        Read More
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+
+            {% include 'includes/_pagination.html' %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Категории
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        {# {% for category in categories %}
+                        <li class="mb-2">
+                            <a href="{% url 'blog:category_article_list' category.slug %}" class="text-decoration-none">
+                                {{ category.name }} ({{ category.article_count }}) #}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Популярные статьи
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        {% for article in popular_articles %}
+                        <li class="mb-2">
+                            <a href="{% url 'blog:article_detail' article.slug %}" class="text-decoration-none">
+                                {{ article.title }}
+                            </a>
+                            <small class="text-muted d-block">{{ article.view_count }} views</small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

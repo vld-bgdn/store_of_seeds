@@ -10,16 +10,18 @@ urlpatterns = [
         include(
             [
                 path("", admin.site.urls),
-                path("reports/", include("apps.reports.urls", namespace="reports")),
-                path("pages/", include("apps.pages.urls", namespace="pages")),
+                path(
+                    "reports/", include("apps.reports.urls", namespace="admin_reports")
+                ),
+                path("pages/", include("apps.pages.urls", namespace="admin_pages")),
             ]
         ),
     ),
     path("cart/", include("apps.cart.urls", namespace="cart")),
     path("orders/", include("apps.orders.urls", namespace="orders")),
     path("", include("apps.products.urls", namespace="products")),
-    path("admin/reports/", include("apps.reports.urls", namespace="reports")),
-    path("admin/pages/", include("apps.pages.urls", namespace="pages")),
+    # path("admin/reports/", include("apps.reports.urls", namespace="reports")),
+    # path("admin/pages/", include("apps.pages.urls", namespace="pages")),
     # path(
     #     "ckeditor5/image_upload/",
     #     custom_upload_file,
@@ -27,6 +29,7 @@ urlpatterns = [
     # ),
     path("ckeditor5/", include(ckeditor5_urls)),
     path("pages/", include("apps.pages.urls", namespace="pages_frontend")),
+    path("blog/", include("apps.blog.urls", namespace="blog")),
 ]
 
 if settings.DEBUG:

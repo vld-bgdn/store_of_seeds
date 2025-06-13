@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }} - Microgreens Store{% endblock %}
+
+{% block meta_description %}{{ article.short_description }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'blog:article_list' %}">Blog</a></li>
+                    <!-- {% if article.category %}
+                    <li class="breadcrumb-item"><a
+                            href="{% url 'blog:category_article_list' article.category.slug %}">{{ article.category.name
+                            }}</a></li>
+                    {% endif %} -->
+                    <li class="breadcrumb-item active" aria-current="page">{{ article.title }}</li>
+                </ol>
+            </nav>
+
+            <article>
+                <h1 class="mb-3">{{ article.title }}</h1>
+
+                <div class="d-flex justify-content-between mb-4">
+                    <div>
+                        <span class="text-muted">
+                            Опубликован {{ article.published_at|date:"F j, Y" }} by {{ article.author }}
+                        </span>
+                    </div>
+                    <div>
+                        <span class="text-muted">
+                            {{ article.view_count }} views
+                        </span>
+                    </div>
+                </div>
+
+                {% if article.image %}
+                <img src="{{ article.image.url }}" class="img-fluid rounded mb-4" alt="{{ article.title }}">
+                {% endif %}
+
+                <div class="article-content">
+                    {{ article.content|safe }}
+                </div>
+            </article>
+
+            <div class="mt-5">
+                <h3>Related Articles</h3>
+                <div class="row">
+                    {% for article in related_articles %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            {% if article.image %}
+                            <img src="{{ article.image.url }}" class="card-img-top" alt="{{ article.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h4 class="card-title h5">
+                                    <a href="{% url 'blog:article_detail' article.slug %}" class="text-decoration-none">
+                                        {{ article.title }}
+                                    </a>
+                                </h4>
+                                <p class="card-text text-muted small">
+                                    {{ article.published_at|date:"F j, Y" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            {% include 'blog/_sidebar.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}
