@@ -4,6 +4,22 @@ from model_utils.models import TimeStampedModel
 from django_ckeditor_5.fields import CKEditor5Field
 
 
+# class ArticleCategory(TimeStampedModel):
+#     """Category for blog articles"""
+
+#     name = models.CharField(_("name"), max_length=100)
+#     slug = models.SlugField(_("slug"), max_length=100, unique=True)
+#     description = models.TextField(_("description"), blank=True)
+
+#     class Meta:
+#         verbose_name = _("article category")
+#         verbose_name_plural = _("article categories")
+#         ordering = ["name"]
+
+#     def __str__(self):
+#         return self.name
+
+
 class Article(TimeStampedModel):
     """Blog article model"""
 
@@ -29,19 +45,3 @@ class Article(TimeStampedModel):
 
     def __str__(self):
         return self.title
-
-
-class ArticleCategory(TimeStampedModel):
-    """Category for blog articles"""
-
-    name = models.CharField(_("name"), max_length=100)
-    slug = models.SlugField(_("slug"), max_length=100, unique=True)
-    description = models.TextField(_("description"), blank=True)
-
-    class Meta:
-        verbose_name = _("article category")
-        verbose_name_plural = _("article categories")
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name

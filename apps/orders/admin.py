@@ -53,50 +53,6 @@ class OrderAdmin(admin.ModelAdmin):
         "ip_address",
         "customer_link",
     ]
-    fieldsets = (
-        (
-            None,
-            {
-                "fields": (
-                    "status",
-                    "payment_status",
-                    "payment_method",
-                    "delivery_method",
-                    "total_cost",
-                )
-            },
-        ),
-        (
-            _("Customer information"),
-            {
-                "fields": (
-                    "customer_link",
-                    "first_name",
-                    "last_name",
-                    "email",
-                    "phone",
-                    "ip_address",
-                )
-            },
-        ),
-        (
-            _("Delivery information"),
-            {
-                "fields": (
-                    "address",
-                    "postal_code",
-                    "city",
-                    "country",
-                    "cdek_point_id",
-                    "cdek_point_address",
-                )
-            },
-        ),
-        (
-            _("Additional information"),
-            {"fields": ("need_consultation", "notes", "created", "modified")},
-        ),
-    )
     actions = [
         "mark_as_processing",
         "mark_as_shipped",
@@ -117,7 +73,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     customer_link.short_description = _("User account")
 
-    def actions(self, obj):
+    def order_actions(self, obj):  # Renamed from 'actions' to avoid conflict
         return format_html(
             '<a class="button" href="{}">View</a>&nbsp;'
             '<a class="button" href="{}">Invoice</a>',
@@ -125,8 +81,8 @@ class OrderAdmin(admin.ModelAdmin):
             reverse("orders:admin_order_invoice", args=[obj.id]),
         )
 
-    actions.short_description = _("Actions")
-    actions.allow_tags = True
+    order_actions.short_description = _("Actions")
+    order_actions.allow_tags = True
 
     # Custom actions
     def mark_as_processing(self, request, queryset):

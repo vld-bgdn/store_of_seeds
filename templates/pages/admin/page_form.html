@@ -1,0 +1,78 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1>{% if object %}Edit{% else %}Create{% endif %} Page</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="card mb-4">
+            <div class="card-header">
+                Basic Information
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Title*</label>
+                    {{ form.title }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Slug*</label>
+                    {{ form.slug }}
+                    <small class="form-text text-muted">
+                        URL-friendly version of the title
+                    </small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Template</label>
+                    {{ form.template_name }}
+                </div>
+                <div class="mb-3 form-check">
+                    {{ form.is_active }}
+                    <label class="form-check-label">Active</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                Content
+            </div>
+            <div class="card-body">
+                {{ form.content }}
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                SEO Settings
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Meta Title</label>
+                    {{ form.meta_title }}
+                    <small class="form-text text-muted">
+                        Title for search engines (leave blank to use page title)
+                    </small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Meta Description</label>
+                    {{ form.meta_description }}
+                    <small class="form-text text-muted">
+                        Description for search engines
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'pages:page_list' %}" class="btn btn-secondary">
+                Cancel
+            </a>
+            <button type="submit" class="btn btn-primary">
+                Save Page
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -2,6 +2,10 @@ from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from .models import Report
 
+admin.site.site_header = "Microgreens Store Admin"
+admin.site.site_title = "Microgreens Store Admin Portal"
+admin.site.index_title = "Welcome to Microgreens Store Admin"
+
 
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
@@ -9,11 +13,10 @@ class ReportAdmin(admin.ModelAdmin):
     list_filter = ["report_type", "is_ready"]
     search_fields = ["name"]
     readonly_fields = ["created", "modified"]
-    actions = ["generate_reports"]
+    actions = ["generate_reports"]  # This should be a list of strings
 
     def generate_reports(self, request, queryset):
         for report in queryset:
-            # In a real app, this would queue a Celery task
             report.is_ready = True
             report.generated_by = request.user
             report.save()

@@ -1,0 +1,50 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1>Reports Dashboard</h1>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    Quick Reports
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'reports:quick_sales_report' days=7 %}" class="btn btn-primary mb-2 d-block">
+                        Last 7 Days Sales
+                    </a>
+                    <a href="{% url 'reports:quick_sales_report' days=30 %}" class="btn btn-primary mb-2 d-block">
+                        Last 30 Days Sales
+                    </a>
+                    <a href="{% url 'reports:quick_inventory_report' %}" class="btn btn-primary d-block">
+                        Current Inventory
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    Generate New Report
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{% url 'reports:generate_sales_report' %}" class="btn btn-success mb-3 d-block">
+                                Generate Sales Report
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'reports:generate_product_report' %}" class="btn btn-success mb-3 d-block">
+                                Generate Product Report
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

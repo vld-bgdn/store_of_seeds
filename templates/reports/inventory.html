@@ -1,0 +1,72 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1>Inventory Report</h1>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                    <h2 class="card-title">{{ out_of_stock.count }}</h2>
+                    <p class="card-text">Out of Stock</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h2 class="card-title">{{ low_stock.count }}</h2>
+                    <p class="card-text">Low Stock</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h2 class="card-title">{{ total_products }}</h2>
+                    <p class="card-text">Total Products</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            Product Inventory
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Stock</th>
+                        <th>Price</th>
+                        <th>Total Ordered</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr
+                        class="{% if product.stock == 0 %}table-danger{% elif product.stock < 10 %}table-warning{% endif %}">
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.stock }}</td>
+                        <td>{{ product.price }} ₽</td>
+                        <td>{{ product.total_ordered|default:0 }}</td>
+                        <td>
+                            {% if product.stock == 0 %}
+                            <span class="badge bg-danger">Out of Stock</span>
+                            {% elif product.stock < 10 %} <span class="badge bg-warning">Low Stock</span>
+                                {% else %}
+                                <span class="badge bg-success">In Stock</span>
+                                {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

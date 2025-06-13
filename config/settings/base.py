@@ -60,6 +60,8 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "apps.cart.context_processors.cart",
+                "apps.reports.admin_menu.reports_menu",
+                "apps.pages.admin_menu.pages_menu",
             ],
         },
     },
@@ -213,6 +215,8 @@ CKEDITOR_5_CONFIGS = {
         },
     },
 }
+
+# CK_EDITOR_5_UPLOAD_FILE_VIEW_NAME = "custom_upload_file"
 
 WSGI_APPLICATION = "config.wsgi.application"
 

@@ -19,38 +19,23 @@ class PromoCodeAdmin(admin.ModelAdmin):
         "valid_from",
         "valid_to",
         "active",
-        "usage_count",
+        # "usage_count",
     ]
     list_filter = ["discount_type", "active"]
     search_fields = ["code"]
-    readonly_fields = ["usage_count"]
+    # readonly_fields = ["usage_count"]
     inlines = [PromoCodeUseInline]
-    fieldsets = (
-        (
-            None,
-            {
-                "fields": (
-                    "code",
-                    "active",
-                    "discount_type",
-                    "discount_value",
-                    "max_discount",
-                    "min_order_amount",
-                )
-            },
-        ),
-        (
-            _("Validity"),
-            {"fields": ("valid_from", "valid_to", "max_uses", "current_uses")},
-        ),
-        (_("Restrictions"), {"fields": ("for_all_users", "for_first_order", "users")}),
-    )
-    filter_horizontal = ["users"]
+    actions = ["mark_as_active", "mark_as_inactive"]  # List of action names
 
-    def usage_count(self, obj):
-        return obj.uses.count()
+    def mark_as_active(self, request, queryset):
+        queryset.update(active=True)
 
-    usage_count.short_description = _("Usage count")
+    mark_as_active.short_description = _("Mark selected promo codes as active")
+
+    def mark_as_inactive(self, request, queryset):
+        queryset.update(active=False)
+
+    mark_as_inactive.short_description = _("Mark selected promo codes as inactive")
 
 
 @admin.register(PromoCodeUse)

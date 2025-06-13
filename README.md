@@ -9,6 +9,8 @@ python manage.py makemigrations users
 python manage.py makemigrations orders
 # If you want to be specific about the blog app:
 python manage.py makemigrations blog
+# If you want to be specific about the pages app:
+python manage.py makemigrations pages
 
 # Apply the migrations to create the database tables
 python manage.py migrate
