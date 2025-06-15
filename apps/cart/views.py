@@ -1,24 +1,62 @@
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
-from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
+from django.utils.translation import gettext_lazy as _
 from apps.products.models import Product
+from apps.discounts.models import PromoCode
 from .models import Cart, CartItem
 
 
-def get_or_create_cart(request):
-    """Get or create cart based on session key"""
-    if not request.session.session_key:
-        request.session.create()
-    session_key = request.session.session_key
-    cart, created = Cart.objects.get_or_create(session_key=session_key)
-    return cart
+def cart_detail(request):
+    cart = Cart.objects.get_or_create_cart(request)
+    return render(request, "cart/detail.html", {"cart": cart})
+
+
+def apply_promo_code(request):
+    cart = Cart.objects.get_or_create_cart(request)
+
+    if request.method == "POST":
+        promo_code = request.POST.get("promo_code", "").strip()
+        remove_promo = "remove_promo" in request.POST
+
+        if remove_promo:
+            cart.remove_promo_code()
+            messages.success(
+                request, _("Promo code removed successfully."), extra_tags="promo_code"
+            )
+        elif promo_code:
+            try:
+                promo = PromoCode.objects.get(code=promo_code, active=True)
+                if promo.is_valid(
+                    request.user if request.user.is_authenticated else None,
+                    cart.subtotal,
+                ):
+                    cart.apply_promo_code(promo)
+                    messages.success(
+                        request,
+                        _("Promo code applied successfully!"),
+                        extra_tags="promo_code",
+                    )
+                else:
+                    cart.remove_promo_code()
+                    messages.error(
+                        request,
+                        _("This promo code is not valid for your cart."),
+                        extra_tags="promo_code",
+                    )
+            except PromoCode.DoesNotExist:
+                cart.remove_promo_code()
+                messages.error(
+                    request, _("Invalid promo code."), extra_tags="promo_code"
+                )
+
+    return redirect("cart:cart_detail")
 
 
 @require_POST
 def cart_add(request, product_id):
     """Add product to cart or update quantity"""
-    cart = get_or_create_cart(request)
+    cart = Cart.objects.get_or_create_cart(request)
     product = get_object_or_404(Product, id=product_id)
 
     cart_item, created = CartItem.objects.get_or_create(
@@ -36,7 +74,7 @@ def cart_add(request, product_id):
 @require_POST
 def cart_remove(request, product_id):
     """Remove product from cart"""
-    cart = get_or_create_cart(request)
+    cart = Cart.objects.get_or_create_cart(request)
     product = get_object_or_404(Product, id=product_id)
     cart.items.filter(product=product).delete()
     messages.success(request, _("Product removed from cart"))
@@ -45,14 +83,14 @@ def cart_remove(request, product_id):
 
 def cart_detail(request):
     """Display cart contents"""
-    cart = get_or_create_cart(request)
+    cart = Cart.objects.get_or_create_cart(request)
     return render(request, "cart/detail.html", {"cart": cart})
 
 
 @require_POST
 def cart_update(request, product_id):
     """Update product quantity in cart"""
-    cart = get_or_create_cart(request)
+    cart = Cart.objects.get_or_create_cart(request)
     product = get_object_or_404(Product, id=product_id)
     quantity = int(request.POST.get("quantity", 1))
 

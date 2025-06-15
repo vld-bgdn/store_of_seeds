@@ -96,6 +96,45 @@ class OrderCreateView(CreateView):
             # CDEK calculation will be handled via AJAX
             return 0
 
+    def form_valid(self, form):
+        cart = Cart(self.request)
+        order = form.save(commit=False)
+
+        if self.request.user.is_authenticated:
+            order.user = self.request.user
+
+        order.ip_address = self.request.META.get("REMOTE_ADDR")
+        order.delivery_cost = self._calculate_delivery_cost(order.delivery_method, cart)
+
+        # Add promo code information
+        if cart.promo_code and cart.promo_code_applied:
+            order.promo_code = cart.promo_code
+            order.discount_amount = cart.discount_amount
+
+        order.save()
+
+        # Create order items
+        for item in cart:
+            OrderItem.objects.create(
+                order=order,
+                product=item["product"],
+                price=item["price"],
+                quantity=item["quantity"],
+            )
+
+        # Clear the cart
+        cart.clear()
+
+        # Send order confirmation email
+        order_created.delay(order.id)
+
+        # Set order in session for payment process
+        self.request.session["order_id"] = order.id
+
+        messages.success(self.request, _("Your order has been placed successfully!"))
+
+        return redirect(reverse_lazy("orders:payment_process"))
+
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
     """View for order details"""

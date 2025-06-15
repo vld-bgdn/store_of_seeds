@@ -3,6 +3,9 @@ from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+# from datetime import timezone
+from django.utils import timezone
+
 
 class PromoCode(TimeStampedModel):
     """Promo code for discounts"""
@@ -59,13 +62,13 @@ class PromoCode(TimeStampedModel):
         return self.code
 
     def is_valid(self, user=None, order_total=None):
-        """Check if promo code is valid"""
-        from django.utils import timezone
+        """Check if promo code is valid for the given user and order total"""
+        now = timezone.now()
 
         if not self.active:
             return False
 
-        if timezone.now() < self.valid_from or timezone.now() > self.valid_to:
+        if now < self.valid_from or now > self.valid_to:
             return False
 
         if self.max_uses and self.current_uses >= self.max_uses:
@@ -91,12 +94,12 @@ class PromoCode(TimeStampedModel):
         return True
 
     def apply_discount(self, order_total):
-        """Apply discount to order total"""
+        """Calculate discount amount for the given order total"""
         if self.discount_type == self.DiscountType.PERCENT:
             discount = order_total * (self.discount_value / 100)
             if self.max_discount:
                 discount = min(discount, self.max_discount)
-            return discount
+            return round(discount, 2)
         else:
             return min(self.discount_value, order_total)
 
