@@ -10,7 +10,7 @@ class OrderItemInline(admin.TabularInline):
     raw_id_fields = ["product"]
     extra = 0
     readonly_fields = ["price"]
-    fields = ["product", "price", "quantity", "cost"]
+    fields = ["product", "price", "quantity"]
 
     def cost(self, instance):
         return instance.cost
@@ -27,7 +27,7 @@ class OrderAdmin(admin.ModelAdmin):
         "status",
         "payment_status",
         "total_cost",
-        "actions",
+        "order_actions",  # Changed from "actions" to "order_actions"
     ]
     list_filter = [
         "status",
@@ -73,16 +73,18 @@ class OrderAdmin(admin.ModelAdmin):
 
     customer_link.short_description = _("User account")
 
-    def order_actions(self, obj):  # Renamed from 'actions' to avoid conflict
+    def order_actions(self, obj):
         return format_html(
-            '<a class="button" href="{}">View</a>&nbsp;'
-            '<a class="button" href="{}">Invoice</a>',
+            '<a class="button" href="{}">View</a>&nbsp;',
+            # '<a class="button" href="{}">Invoice</a>',
             reverse("admin:orders_order_change", args=[obj.id]),
-            reverse("orders:admin_order_invoice", args=[obj.id]),
+            # reverse("orders:admin_order_invoice", args=[obj.id]),
         )
 
     order_actions.short_description = _("Actions")
-    order_actions.allow_tags = True
+    order_actions.allow_tags = (
+        True  # Note: allow_tags is deprecated in newer Django versions
+    )
 
     # Custom actions
     def mark_as_processing(self, request, queryset):

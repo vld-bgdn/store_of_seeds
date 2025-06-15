@@ -27,8 +27,14 @@ class OrderCreateForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        self.cart = kwargs.pop("cart", None)
         super().__init__(*args, **kwargs)
-        self.fields["first_name"].required = True
-        self.fields["last_name"].required = True
-        self.fields["email"].required = True
-        self.fields["phone"].required = True
+
+    def save(self, commit=True):
+        order = super().save(commit=False)
+        if self.cart and self.cart.promo_code:
+            order.promo_code = self.cart.promo_code
+            order.discount_amount = self.cart.discount_amount
+        if commit:
+            order.save()
+        return order

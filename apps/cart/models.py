@@ -57,9 +57,12 @@ class Cart(models.Model):
     def __str__(self):
         return f"Cart {self.pk}"
 
+    # @property
+    # def subtotal(self):
+    #     return sum(item.price * item.quantity for item in self.items.all())
     @property
     def subtotal(self):
-        return sum(item.price * item.quantity for item in self.items.all())
+        return sum(item.total_price for item in self.items.all())
 
     @property
     def discount_amount(self):
@@ -74,6 +77,17 @@ class Cart(models.Model):
     @property
     def total_quantity(self):
         return sum(item.quantity for item in self.items.all())
+
+    def clear(self):
+        """Clear all items and promo code from cart"""
+        self.items.all().delete()
+        self.promo_code = None
+        self.promo_code_applied = False
+        self.save()
+
+    def has_items(self):
+        """Check if cart has any items"""
+        return self.items.exists()
 
 
 class CartItem(models.Model):

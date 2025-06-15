@@ -1,28 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}Оплата заказа{% endblock %}
+{% block title %}Оплата - Заказ #{{ order.id }}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                Оплата заказа #{{ order.id }}
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">Сумма к оплате: {{ order.total_cost }} ₽</h5>
-                <p class="card-text">Выбранный способ оплаты: {{ order.get_payment_method_display }}</p>
-
-                {% if order.payment_method == 'yandex' %}
-                <div id="yandexPayButton" class="mb-4"></div>
-                {% endif %}
-
-                <form method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-success btn-lg">
-                        Подтвердить оплату (тестовый режим)
-                    </button>
-                </form>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    Payment for Order #{{ order.id }}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Amount to Pay: {{ order.total_with_discount }} ₽</h5>
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Subtotal:</span>
+                                    <span>{{ order.subtotal }} ₽</span>
+                                </li>
+                                {% if order.promo_code %}
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Discount:</span>
+                                    <span class="text-danger">-{{ order.discount_amount }} ₽</span>
+                                </li>
+                                {% endif %}
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Delivery:</span>
+                                    <span>{{ order.delivery_cost }} ₽</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <strong>Total:</strong>
+                                    <strong>{{ order.total_with_discount }} ₽</strong>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Payment method specific content -->
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-lg">
+                            Confirm Payment
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

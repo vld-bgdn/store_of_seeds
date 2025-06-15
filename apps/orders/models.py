@@ -112,13 +112,31 @@ class Order(TimeStampedModel):
     def __str__(self):
         return f"Order #{self.pk}"
 
-    def save(self, *args, **kwargs):
-        if not self.total_cost:
-            self.total_cost = self.calculate_total()
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.total_cost:
+    #         self.total_cost = self.calculate_total()
+    #     super().save(*args, **kwargs)
 
-    def calculate_total(self):
-        return sum(item.cost for item in self.items.all()) + self.delivery_cost
+    # def calculate_total(self):
+    #     return sum(item.cost for item in self.items.all()) + self.delivery_cost
+
+    @property
+    def subtotal(self):
+        return sum(item.price * item.quantity for item in self.items.all())
+
+    @property
+    def total_with_discount(self):
+        if self.promo_code:
+            return self.subtotal - self.discount_amount + self.delivery_cost
+        return self.subtotal + self.delivery_cost
+
+    def save(self, *args, **kwargs):
+        if not hasattr(self, "discount_amount") or not self.discount_amount:
+            if self.promo_code:
+                self.discount_amount = self.promo_code.apply_discount(self.subtotal)
+            else:
+                self.discount_amount = 0
+        super().save(*args, **kwargs)
 
 
 class OrderItem(models.Model):
@@ -136,13 +154,13 @@ class OrderItem(models.Model):
     price = models.DecimalField(_("price"), max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(_("quantity"), default=1)
 
+    @property
+    def cost(self):
+        return self.price * self.quantity
+
     class Meta:
         verbose_name = _("order item")
         verbose_name_plural = _("order items")
 
     def __str__(self):
         return f"{self.quantity}x {self.product.name}"
-
-    @property
-    def cost(self):
-        return self.price * self.quantity

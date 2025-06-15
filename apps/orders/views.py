@@ -14,77 +14,23 @@ from .tasks import order_created
 
 
 class OrderCreateView(CreateView):
-    """View for creating new orders"""
-
     model = Order
     form_class = OrderCreateForm
     template_name = "orders/order_create.html"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["cart"] = Cart.objects.get_or_create_cart(self.request)
+        return kwargs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # Get or create cart based on session key
-        session_key = self.request.session.session_key
-        if not session_key:
-            self.request.session.create()
-            session_key = self.request.session.session_key
-
-        cart, created = Cart.objects.get_or_create(session_key=session_key)
+        cart = Cart.objects.get_or_create_cart(self.request)
         context["cart"] = cart
-        context["cart_items"] = cart.items.all()  # Add items explicitly
-
+        context["delivery_cost"] = self._calculate_delivery_cost(
+            self.request.POST.get("delivery_method", Order.DeliveryMethod.POST), cart
+        )
         return context
-
-    def form_valid(self, form):
-        # Get cart based on session key
-        session_key = self.request.session.session_key
-        if not session_key:
-            messages.error(self.request, _("No cart found"))
-            return redirect("cart:cart_detail")
-
-        try:
-            cart = Cart.objects.get(session_key=session_key)
-        except Cart.DoesNotExist:
-            messages.error(self.request, _("Cart not found"))
-            return redirect("cart:cart_detail")
-
-        # Check if cart has items
-        if not cart.items.exists():
-            messages.error(self.request, _("Your cart is empty"))
-            return redirect("cart:cart_detail")
-
-        order = form.save(commit=False)
-
-        if self.request.user.is_authenticated:
-            order.user = self.request.user
-
-        order.ip_address = self.request.META.get("REMOTE_ADDR")
-        order.delivery_cost = self._calculate_delivery_cost(order.delivery_method, cart)
-        order.save()
-
-        # Create order items from cart items
-        for cart_item in cart.items.all():
-            OrderItem.objects.create(
-                order=order,
-                product=cart_item.product,
-                price=cart_item.price,
-                quantity=cart_item.quantity,
-            )
-
-        # Clear the cart by deleting all items
-        cart.items.all().delete()
-        # Or delete the entire cart if you prefer
-        # cart.delete()
-
-        # Send order confirmation email asynchronously
-        order_created.delay(order.id)
-
-        # Set order in session for payment process
-        self.request.session["order_id"] = order.id
-
-        messages.success(self.request, _("Your order has been placed successfully!"))
-
-        return redirect(reverse_lazy("orders:payment_process"))
 
     def _calculate_delivery_cost(self, delivery_method, cart):
         """Calculate delivery cost based on method"""
@@ -97,7 +43,7 @@ class OrderCreateView(CreateView):
             return 0
 
     def form_valid(self, form):
-        cart = Cart(self.request)
+        cart = Cart.objects.get_or_create_cart(self.request)
         order = form.save(commit=False)
 
         if self.request.user.is_authenticated:
@@ -106,7 +52,6 @@ class OrderCreateView(CreateView):
         order.ip_address = self.request.META.get("REMOTE_ADDR")
         order.delivery_cost = self._calculate_delivery_cost(order.delivery_method, cart)
 
-        # Add promo code information
         if cart.promo_code and cart.promo_code_applied:
             order.promo_code = cart.promo_code
             order.discount_amount = cart.discount_amount
@@ -114,24 +59,24 @@ class OrderCreateView(CreateView):
         order.save()
 
         # Create order items
-        for item in cart:
+        for cart_item in cart.items.select_related("product").all():
             OrderItem.objects.create(
                 order=order,
-                product=item["product"],
-                price=item["price"],
-                quantity=item["quantity"],
+                product=cart_item.product,
+                price=cart_item.price,
+                quantity=cart_item.quantity,
             )
 
         # Clear the cart
         cart.clear()
 
         # Send order confirmation email
-        order_created.delay(order.id)
+        # order_created.delay(order.id) fix after adding email and telegram messaging
 
         # Set order in session for payment process
         self.request.session["order_id"] = order.id
 
-        messages.success(self.request, _("Your order has been placed successfully!"))
+        messages.success(self.request, _("Ваш заказ успешно добавлен"))
 
         return redirect(reverse_lazy("orders:payment_process"))
 

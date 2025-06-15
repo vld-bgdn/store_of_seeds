@@ -4,12 +4,15 @@ from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from apps.products.models import Product
 from apps.discounts.models import PromoCode
+from .forms import PromoCodeForm
 from .models import Cart, CartItem
 
 
 def cart_detail(request):
     cart = Cart.objects.get_or_create_cart(request)
-    return render(request, "cart/detail.html", {"cart": cart})
+    return render(
+        request, "cart/detail.html", {"cart": cart, "promo_code_form": PromoCodeForm()}
+    )
 
 
 def apply_promo_code(request):
@@ -79,12 +82,6 @@ def cart_remove(request, product_id):
     cart.items.filter(product=product).delete()
     messages.success(request, _("Product removed from cart"))
     return redirect("cart:cart_detail")
-
-
-def cart_detail(request):
-    """Display cart contents"""
-    cart = Cart.objects.get_or_create_cart(request)
-    return render(request, "cart/detail.html", {"cart": cart})
 
 
 @require_POST
