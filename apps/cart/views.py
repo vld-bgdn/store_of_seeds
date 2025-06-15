@@ -37,14 +37,14 @@ def apply_promo_code(request):
                     cart.apply_promo_code(promo)
                     messages.success(
                         request,
-                        _("Promo code applied successfully!"),
+                        _("Пром код успешно применен"),
                         extra_tags="promo_code",
                     )
                 else:
                     cart.remove_promo_code()
                     messages.error(
                         request,
-                        _("This promo code is not valid for your cart."),
+                        _("Неверный промокод"),
                         extra_tags="promo_code",
                     )
             except PromoCode.DoesNotExist:
@@ -70,7 +70,7 @@ def cart_add(request, product_id):
         cart_item.quantity += 1
         cart_item.save()
 
-    messages.success(request, _("Product added to cart"))
+    messages.success(request, _("Продукт добавлен в корзину"))
     return redirect("cart:cart_detail")
 
 
@@ -80,7 +80,7 @@ def cart_remove(request, product_id):
     cart = Cart.objects.get_or_create_cart(request)
     product = get_object_or_404(Product, id=product_id)
     cart.items.filter(product=product).delete()
-    messages.success(request, _("Product removed from cart"))
+    messages.success(request, _("Продукт удален из корзины"))
     return redirect("cart:cart_detail")
 
 
@@ -99,5 +99,5 @@ def cart_update(request, product_id):
             cart_item.quantity = quantity
             cart_item.save()
 
-    messages.success(request, _("Cart updated"))
+    messages.success(request, _("Корзина обновлена"))
     return redirect("cart:cart_detail")

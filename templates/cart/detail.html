@@ -29,7 +29,7 @@
                                     <form action="{% url 'cart:cart_update' item.product.id %}" method="post">
                                         {% csrf_token %}
                                         <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
-                                        <button type="submit">Update</button>
+                                        <button class="btn btn-primary" type="submit">Обновить</button>
                                     </form>
                                 </td>
                                 <td>{{ item.price }} ₽</td>
@@ -37,7 +37,7 @@
                                 <td>
                                     <form action="{% url 'cart:cart_remove' item.product.id %}" method="post">
                                         {% csrf_token %}
-                                        <button type="submit">Удалить</button>
+                                        <button class="btn btn-primary" type="submit">Удалить</button>
                                     </form>
                                 </td>
                             </tr>
@@ -73,7 +73,7 @@
                         <div class="input-group mb-3">
                             <input type="text" name="promo_code" class="form-control" placeholder="Enter promo code" {% if cart.promo_code %}value="{{ cart.promo_code.code }}" {% endif %}>
                             <button class="btn btn-primary" type="submit">
-                                {% if cart.promo_code %}Reapply{% else %}Apply{% endif %}
+                                {% if cart.promo_code %}Обновить{% else %}Применить{% endif %}
                             </button>
                         </div>
                         {% if messages %}

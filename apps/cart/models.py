@@ -102,6 +102,10 @@ class CartItem(models.Model):
     quantity = models.PositiveIntegerField(_("quantity"), default=1)
     price = models.DecimalField(_("price"), max_digits=10, decimal_places=2)
 
+    @property
+    def total_price(self):
+        return self.price * self.quantity
+
     class Meta:
         verbose_name = _("cart item")
         verbose_name_plural = _("cart items")
@@ -110,6 +114,3 @@ class CartItem(models.Model):
     def __str__(self):
         return f"{self.quantity}x {self.product.name}"
 
-    @property
-    def total_price(self):
-        return self.price * self.quantity
