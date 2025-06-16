@@ -290,3 +290,17 @@ CDEK_SECURE_PASSWORD = env("CDEK_SECURE_PASSWORD", default="")
 
 YANDEX_PAY_MERCHANT_ID = env("YANDEX_PAY_MERCHANT_ID", default="")
 YANDEX_PAY_SECRET_KEY = env("YANDEX_PAY_SECRET_KEY", default="")
+
+SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+SESSION_COOKIE_HTTPONLY = True
+
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+    }
+}
