@@ -8,29 +8,29 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    Payment for Order #{{ order.id }}
+                    Оплата заказа #{{ order.id }}
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">Amount to Pay: {{ order.total_with_discount }} ₽</h5>
+                    <h5 class="card-title">К оплате: {{ order.total_with_discount }} ₽</h5>
                     <div class="card mb-4">
                         <div class="card-body">
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>Subtotal:</span>
+                                    <span>Стоимость товара:</span>
                                     <span>{{ order.subtotal }} ₽</span>
                                 </li>
                                 {% if order.promo_code %}
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>Discount:</span>
+                                    <span>Скидка:</span>
                                     <span class="text-danger">-{{ order.discount_amount }} ₽</span>
                                 </li>
                                 {% endif %}
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>Delivery:</span>
+                                    <span>Стоимость доставки:</span>
                                     <span>{{ order.delivery_cost }} ₽</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <strong>Total:</strong>
+                                    <strong>Итого:</strong>
                                     <strong>{{ order.total_with_discount }} ₽</strong>
                                 </li>
                             </ul>
@@ -40,7 +40,7 @@
                     <form method="post">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-success btn-lg">
-                            Confirm Payment
+                            Оплатить
                         </button>
                     </form>
                 </div>

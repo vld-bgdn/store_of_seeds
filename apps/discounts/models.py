@@ -13,43 +13,44 @@ class PromoCode(TimeStampedModel):
     """Promo code for discounts"""
 
     class DiscountType(models.TextChoices):
-        PERCENT = "percent", _("Percentage")
-        FIXED = "fixed", _("Fixed amount")
+        PERCENT = "percent", _("Процент")
+        FIXED = "fixed", _("Фиксированная сумма")
 
-    code = models.CharField(_("code"), max_length=20, unique=True)
+    code = models.CharField(_("Код"), max_length=20, unique=True)
     discount_type = models.CharField(
-        _("discount type"),
+        _("тип скидки"),
         max_length=10,
         choices=DiscountType.choices,
         default=DiscountType.PERCENT,
     )
     discount_value = models.DecimalField(
-        _("discount value"),
+        _("размер скидки"),
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(0)],
     )
     max_discount = models.DecimalField(
-        _("maximum discount"),
+        _("размер максимальной скидки"),
         max_digits=10,
         decimal_places=2,
         blank=True,
-        help_text=_("Maximum discount for percentage discounts"),
+        help_text=_("Максимальная скидка для процентных скидок"),
     )
     min_order_amount = models.DecimalField(
-        _("minimum order amount"),
+        _("минимальная сумма заказа"),
         max_digits=10,
         decimal_places=2,
         blank=True,
-        help_text=_("Minimum order amount to apply discount"),
+        help_text=_("Минимальная сумма заказа для применения скидки"),
     )
-    valid_from = models.DateTimeField(_("valid from"))
-    valid_to = models.DateTimeField(_("valid to"))
+    valid_from = models.DateTimeField(_("Действует с"))
+    valid_to = models.DateTimeField(_("Действует до"))
     active = models.BooleanField(_("active"), default=True)
     max_uses = models.PositiveIntegerField(
-        _("maximum uses"),
+        _("максимальное использование uses"),
         blank=True,
-        help_text=_("Maximum number of times this code can be used"),
+        help_text=_("Максимально количество раз, когда можно использовать этот код"),
+        default=200,
     )
     current_uses = models.PositiveIntegerField(_("current uses"), default=0)
     for_all_users = models.BooleanField(_("for all users"), default=True)

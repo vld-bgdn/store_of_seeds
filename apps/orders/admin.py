@@ -63,11 +63,19 @@ class OrderAdmin(admin.ModelAdmin):
     def customer_info(self, obj):
         return f"{obj.first_name} {obj.last_name} ({obj.email})"
 
-    customer_info.short_description = _("Customer")
+    customer_info.short_description = _("Покупатель")
+
+    # def customer_link(self, obj):
+    #     if obj.user:
+    #         url = reverse("admin:users_user_change", args=[obj.user.id])
+    #         return format_html('<a href="{}">{}</a>', url, obj.user)
+    #     return "-"
 
     def customer_link(self, obj):
         if obj.user:
-            url = reverse("admin:users_user_change", args=[obj.user.id])
+            url = reverse(
+                "admin:auth_user_change", args=[obj.user.id]
+            )  # Changed from users_user_change
             return format_html('<a href="{}">{}</a>', url, obj.user)
         return "-"
 
@@ -75,16 +83,16 @@ class OrderAdmin(admin.ModelAdmin):
 
     def order_actions(self, obj):
         return format_html(
-            '<a class="button" href="{}">View</a>&nbsp;',
+            '<a class="button" href="{}">Просмотр</a>&nbsp;',
             # '<a class="button" href="{}">Invoice</a>',
             reverse("admin:orders_order_change", args=[obj.id]),
             # reverse("orders:admin_order_invoice", args=[obj.id]),
         )
 
-    order_actions.short_description = _("Actions")
-    order_actions.allow_tags = (
-        True  # Note: allow_tags is deprecated in newer Django versions
-    )
+    order_actions.short_description = _("Действия")
+    # order_actions.allow_tags = (
+    #     True  # Note: allow_tags is deprecated in newer Django versions
+    # )
 
     # Custom actions
     def mark_as_processing(self, request, queryset):
