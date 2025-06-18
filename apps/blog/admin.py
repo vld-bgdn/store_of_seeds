@@ -24,7 +24,7 @@ class ArticleCategoryAdmin(admin.ModelAdmin):
     def article_count(self, obj):
         return obj.articles.count()  # Using related_name "articles"
 
-    article_count.short_description = _("Articles")
+    article_count.short_description = _("Количество")
 
 
 @admin.register(Article)
@@ -45,9 +45,12 @@ class ArticleAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {"fields": ("title", "slug", "author", "category")}),
-        (_("Content"), {"fields": ("short_description", "content", "image")}),
+        (_("Содержимое"), {"fields": ("short_description", "content", "image")}),
         (_("Publishing"), {"fields": ("is_published", "published_at")}),
-        (_("Statistics"), {"fields": ("view_count",), "classes": ("collapse",)}),
+        (
+            _("Статистика просмотров"),
+            {"fields": ("view_count",), "classes": ("collapse",)},
+        ),
         (
             _("Timestamps"),
             {"fields": ("created", "modified"), "classes": ("collapse",)},

@@ -3,7 +3,9 @@ from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-# from datetime import timezone
+# from apps.accounts.models import User
+from django.contrib.auth.models import User
+
 from django.utils import timezone
 
 
@@ -114,7 +116,7 @@ class PromoCodeUse(TimeStampedModel):
         on_delete=models.CASCADE,
     )
     user = models.ForeignKey(
-        "users.User",
+        User,
         verbose_name=_("user"),
         related_name="promo_code_uses",
         on_delete=models.SET_NULL,

@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel
 from django_ckeditor_5.fields import CKEditor5Field
@@ -8,9 +9,9 @@ from django_ckeditor_5.fields import CKEditor5Field
 class ArticleCategory(TimeStampedModel):
     """Category for blog articles"""
 
-    name = models.CharField(_("name"), max_length=100)
-    slug = models.SlugField(_("slug"), max_length=100, unique=True)
-    description = models.TextField(_("description"), blank=True)
+    name = models.CharField(_("Название"), max_length=100)
+    slug = models.SlugField(_("Псведоним"), max_length=100, unique=True)
+    description = models.TextField(_("Описание"), blank=True)
 
     class Meta:
         verbose_name = _("Категория")
@@ -27,29 +28,29 @@ class ArticleCategory(TimeStampedModel):
 class Article(TimeStampedModel):
     """Blog article model"""
 
-    title = models.CharField(_("title"), max_length=200)
-    slug = models.SlugField(_("slug"), max_length=200, unique=True)
+    title = models.CharField(_("Загаловок"), max_length=200)
+    slug = models.SlugField(_("Псведоним"), max_length=200, unique=True)
     author = models.ForeignKey(
-        "users.User",
-        verbose_name=_("author"),
+        User,
+        verbose_name=_("Автор"),
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
     category = models.ForeignKey(
         ArticleCategory,
-        verbose_name=_("category"),
+        verbose_name=_("Категория"),
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="articles",  # This allows reverse lookup
     )
-    content = CKEditor5Field(_("content"), config_name="extends")
-    short_description = models.TextField(_("short description"), blank=True)
-    is_published = models.BooleanField(_("is published"), default=False)
-    published_at = models.DateTimeField(_("published at"), blank=True, null=True)
+    content = CKEditor5Field(_("Контент"), config_name="extends")
+    short_description = models.TextField(_("Короткое описание"), blank=True)
+    is_published = models.BooleanField(_("Опубликовано"), default=False)
+    published_at = models.DateTimeField(_("Время публикации"), blank=True, null=True)
     image = models.ImageField(_("image"), upload_to="articles/", blank=True)
-    view_count = models.PositiveIntegerField(_("view count"), default=0)
+    view_count = models.PositiveIntegerField(_("Количество просмотров"), default=0)
 
     class Meta:
         verbose_name = _("Статья")

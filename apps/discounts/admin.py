@@ -6,7 +6,7 @@ from .models import PromoCode, PromoCodeUse
 class PromoCodeUseInline(admin.TabularInline):
     model = PromoCodeUse
     extra = 0
-    readonly_fields = ["created", "user", "order", "discount_amount"]
+    readonly_fields = ["created", "order", "discount_amount"]  # "user",
     can_delete = False
 
 
@@ -40,7 +40,7 @@ class PromoCodeAdmin(admin.ModelAdmin):
 
 @admin.register(PromoCodeUse)
 class PromoCodeUseAdmin(admin.ModelAdmin):
-    list_display = ["promo_code", "user", "order", "discount_amount", "created"]
+    list_display = ["promo_code", "order", "discount_amount", "created"]  # "user",
     list_filter = ["promo_code"]
     search_fields = ["promo_code__code", "user__email", "order__id"]
     readonly_fields = ["created", "modified"]

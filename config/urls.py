@@ -29,6 +29,7 @@ urlpatterns = [
     # ),
     path("ckeditor5/", include(ckeditor5_urls)),
     path("pages/", include("apps.pages.urls", namespace="pages_frontend")),
+    path("accounts/", include("apps.accounts.urls", namespace="accounts")),
     path("blog/", include("apps.blog.urls", namespace="blog")),
 ]
 
