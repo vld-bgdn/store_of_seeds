@@ -71,7 +71,7 @@
                     <form method="post" action="{% url 'cart:apply_promo_code' %}">
                         {% csrf_token %}
                         <div class="input-group mb-3">
-                            <input type="text" name="promo_code" class="form-control" placeholder="Enter promo code" {% if cart.promo_code %}value="{{ cart.promo_code.code }}" {% endif %}>
+                            <input type="text" name="promo_code" class="form-control" placeholder="Введите промо код" {% if cart.promo_code %}value="{{ cart.promo_code.code }}" {% endif %}>
                             <button class="btn btn-primary" type="submit">
                                 {% if cart.promo_code %}Обновить{% else %}Применить{% endif %}
                             </button>

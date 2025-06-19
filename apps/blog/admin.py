@@ -46,7 +46,7 @@ class ArticleAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {"fields": ("title", "slug", "author", "category")}),
         (_("Содержимое"), {"fields": ("short_description", "content", "image")}),
-        (_("Publishing"), {"fields": ("is_published", "published_at")}),
+        (_("Публикация"), {"fields": ("is_published", "published_at")}),
         (
             _("Статистика просмотров"),
             {"fields": ("view_count",), "classes": ("collapse",)},

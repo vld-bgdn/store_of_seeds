@@ -28,7 +28,7 @@ class ArticleCategory(TimeStampedModel):
 class Article(TimeStampedModel):
     """Blog article model"""
 
-    title = models.CharField(_("Загаловок"), max_length=200)
+    title = models.CharField(_("Заголовок"), max_length=200)
     slug = models.SlugField(_("Псведоним"), max_length=200, unique=True)
     author = models.ForeignKey(
         User,

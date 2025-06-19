@@ -32,48 +32,48 @@ class Product(TimeStampedModel):
     """Product model for microgreens seeds and equipment"""
 
     class DifficultyLevel(models.TextChoices):
-        EASY = "easy", _("Easy")
-        MEDIUM = "medium", _("Medium")
-        HARD = "hard", _("Hard")
+        EASY = "easy", _("легкая")
+        MEDIUM = "medium", _("средняя")
+        HARD = "hard", _("сложная")
 
     category = models.ForeignKey(
         Category,
-        verbose_name=_("category"),
+        verbose_name=_("категория"),
         related_name="products",
         on_delete=models.PROTECT,
     )
-    name = models.CharField(_("name"), max_length=200)
-    slug = models.SlugField(_("slug"), max_length=200, unique=True)
-    article = models.CharField(_("article"), max_length=50, unique=True)
-    price = models.DecimalField(_("price"), max_digits=10, decimal_places=2)
+    name = models.CharField(_("название"), max_length=200)
+    slug = models.SlugField(_("псевдоним"), max_length=200, unique=True)
+    article = models.CharField(_("артикул"), max_length=50, unique=True)
+    price = models.DecimalField(_("цена"), max_digits=10, decimal_places=2)
     old_price = models.DecimalField(
-        _("old price"), max_digits=10, decimal_places=2, blank=True, null=True
+        _("старая цена"), max_digits=10, decimal_places=2, blank=True, null=True
     )
-    short_description = models.TextField(_("short description"), blank=True)
-    full_description = models.TextField(_("full description"), blank=True)
-    stock = models.PositiveIntegerField(_("stock"), default=0)
-    is_active = models.BooleanField(_("is active"), default=True)
+    short_description = models.TextField(_("короткое описание"), blank=True)
+    full_description = models.TextField(_("полное описание"), blank=True)
+    stock = models.PositiveIntegerField(_("остаток"), default=0)
+    is_active = models.BooleanField(_("активно"), default=True)
 
     # Seed-specific fields
     germination_time = models.CharField(
-        _("germination time"), max_length=50, blank=True
+        _("время проростания"), max_length=50, blank=True
     )
     difficulty_level = models.CharField(
-        _("difficulty level"),
+        _("сложность выращивания"),
         max_length=10,
         choices=DifficultyLevel.choices,
         blank=True,
     )
-    taste_characteristics = models.TextField(_("taste characteristics"), blank=True)
-    benefits = models.TextField(_("benefits"), blank=True)
+    taste_characteristics = models.TextField(_("вкусовые характеристики"), blank=True)
+    benefits = models.TextField(_("полезные свойства"), blank=True)
     recommended_substrate = models.CharField(
-        _("recommended substrate"), max_length=100, blank=True
+        _("рекомендуемый субстрат"), max_length=100, blank=True
     )
-    growing_instructions = models.TextField(_("growing instructions"), blank=True)
+    growing_instructions = models.TextField(_("инструкция по проращиванию"), blank=True)
     recommended_temperature = models.CharField(
-        _("recommended temperature"), max_length=50, blank=True
+        _("рекомендуемая температура"), max_length=50, blank=True
     )
-    harvest_dates = models.CharField(_("harvest dates"), max_length=100, blank=True)
+    harvest_dates = models.CharField(_("дата сбора"), max_length=100, blank=True)
 
     class Meta:
         verbose_name = _("Продукт")
@@ -89,17 +89,17 @@ class ProductImage(TimeStampedModel):
 
     product = models.ForeignKey(
         Product,
-        verbose_name=_("product"),
+        verbose_name=_("продукт"),
         related_name="images",
         on_delete=models.CASCADE,
     )
-    image = models.ImageField(_("image"), upload_to="products/")
-    is_main = models.BooleanField(_("is main"), default=False)
-    order = models.PositiveIntegerField(_("order"), default=0)
+    image = models.ImageField(_("изображение"), upload_to="products/")
+    is_main = models.BooleanField(_("основное"), default=False)
+    order = models.PositiveIntegerField(_("заказ"), default=0)
 
     class Meta:
-        verbose_name = _("product image")
-        verbose_name_plural = _("product images")
+        verbose_name = _("изображение продукта")
+        verbose_name_plural = _("изображения продукта")
         ordering = ["order"]
 
     def __str__(self):

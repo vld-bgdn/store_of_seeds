@@ -7,6 +7,6 @@ class PromoCodeForm(forms.Form):
         label=_("Promo Code"),
         max_length=20,
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": _("Enter promo code")}
+            attrs={"class": "form-control", "placeholder": _("Введите промо код")}
         ),
     )
