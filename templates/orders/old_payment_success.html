@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="alert alert-success">
+        <h4>Платеж завершен</h4>
+        <p>Ваш заказ #{{ order.id }} успешно оплачен.</p>
+        <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-primary">
+            Посмотреть заказ
+        </a>
+    </div>
+</div>
+{% endblock %}

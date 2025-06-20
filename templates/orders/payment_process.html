@@ -37,10 +37,15 @@
                         </div>
                     </div>
                     <!-- Payment method specific content -->
-                    <form method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-success btn-lg">
+                    {% if order.payment_status == "pending" %}
+                        <a href="{% url 'orders:create_payment' order.id %}" class="btn btn-success">
                             Оплатить
+                        </a>
+                    {% elif order.payment_status == "succeeded" %}
+                        <div class="alert alert-success">
+                            This order has been paid on {{ order.paid_at|date:"Y-m-d H:i" }}.
+                        </div>
+                    {% endif %}
                         </button>
                     </form>
                 </div>

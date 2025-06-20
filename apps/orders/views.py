@@ -5,12 +5,17 @@ from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+from yookassa import Configuration, Payment, Webhook
+import uuid
 
 from apps.cart.models import Cart
 from .models import Order, OrderItem
 from .forms import OrderCreateForm
-from .tasks import order_created
+
+# from .tasks import order_created
 
 
 class OrderCreateView(CreateView):
@@ -143,3 +148,92 @@ def payment_process(request):
         return render(request, "orders/payment_done.html", {"order": order})
 
     return render(request, "orders/payment_process.html", {"order": order})
+
+
+def create_payment(request, order_id):
+    """Process payment in Yookassa"""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    # Configure Yookassa
+    Configuration.account_id = settings.YOOKASSA_SHOP_ID
+    Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
+
+    payment = Payment.create(
+        {
+            "amount": {
+                "value": str(
+                    # order.get_total_cost()
+                    order.calculate_total()
+                ),  # Ensure this method exists in Order model
+                "currency": "RUB",
+            },
+            "confirmation": {
+                "type": "redirect",
+                "return_url": request.build_absolute_uri(
+                    reverse(settings.YOOKASSA_SUCCESS_URL, args=[order.id])
+                ),
+            },
+            "capture": True,  # Auto-capture payment (no manual confirmation needed)
+            "description": f"Order #{order.id}",
+            "metadata": {
+                "order_id": order.id,
+                "user_id": request.user.id,
+            },
+            "idempotency_key": str(uuid.uuid4()),  # Prevent duplicate payments
+        }
+    )
+
+    # Update order with payment details
+    order.payment_id = payment.id
+    order.payment_status = "pending"
+    order.payment_data = payment.json()  # Store raw Yookassa response
+    order.save()
+
+    # Redirect user to Yookassa payment page
+    return redirect(payment.confirmation.confirmation_url)
+
+
+@csrf_exempt  # Disable CSRF for Yookassa webhook
+def yookassa_webhook(request):
+    if request.method != "POST":
+        return HttpResponse(status=405)
+
+    try:
+        event_data = json.loads(request.body)
+
+        # Verify webhook signature (optional but recommended)
+        if hasattr(settings, "YOOKASSA_WEBHOOK_AUTH_KEY"):
+            signature = request.headers.get("Content-Signature", "")
+            if not Webhook().is_valid_signature(
+                request.body, signature, settings.YOOKASSA_WEBHOOK_AUTH_KEY
+            ):
+                return HttpResponse(status=400)
+
+        # Handle payment events
+        if event_data["event"] == "payment.succeeded":
+            payment = event_data["object"]
+            order = Order.objects.get(id=payment["metadata"]["order_id"])
+            order.payment_status = "succeeded"
+            order.paid_at = payment.get("captured_at") or payment.get("created_at")
+            order.save()
+
+        elif event_data["event"] == "payment.canceled":
+            payment = event_data["object"]
+            order = Order.objects.get(id=payment["metadata"]["order_id"])
+            order.payment_status = "canceled"
+            order.save()
+
+        return JsonResponse({"status": "ok"})
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+
+def payment_success(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, "orders/payment_success.html", {"order": order})
+
+
+def payment_failure(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, "orders/payment_failure.html", {"order": order})

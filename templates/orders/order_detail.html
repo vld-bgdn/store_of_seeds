@@ -4,38 +4,38 @@
 
 {% block content %}
 <div class="container my-5">
-    <h1 class="mb-4">Order #{{ order.id }}</h1>
+    <h1 class="mb-4">Заказ #{{ order.id }}</h1>
     <div class="row">
         <div class="col-md-8">
             <!-- Order details remain the same -->
         </div>
         <div class="col-md-4">
             <div class="card">
-                <div class="card-header">Order Summary</div>
+                <div class="card-header">Сумма заказа</div>
                 <div class="card-body">
                     <ul class="list-group list-group-flush mb-3">
                         <li class="list-group-item d-flex justify-content-between">
-                            <span>Subtotal</span>
+                            <span>Сумма</span>
                             <span>{{ order.subtotal }} ₽</span>
                         </li>
                         {% if order.promo_code %}
                         <li class="list-group-item d-flex justify-content-between">
-                            <span>Discount ({{ order.promo_code.code }})</span>
+                            <span>Скидка ({{ order.promo_code.code }})</span>
                             <span class="text-danger">-{{ order.discount_amount }} ₽</span>
                         </li>
                         {% endif %}
                         <li class="list-group-item d-flex justify-content-between">
-                            <span>Delivery</span>
+                            <span>Доставка</span>
                             <span>{{ order.delivery_cost }} ₽</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between">
-                            <strong>Total</strong>
+                            <strong>Итого</strong>
                             <strong>{{ order.total_with_discount }} ₽</strong>
                         </li>
                     </ul>
                     {% if order.promo_code %}
                     <div class="alert alert-success">
-                        Promo code <strong>{{ order.promo_code.code }}</strong> was applied
+                        Промо код <strong>{{ order.promo_code.code }}</strong> был применен
                     </div>
                     {% endif %}
                 </div>

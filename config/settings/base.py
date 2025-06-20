@@ -362,8 +362,12 @@ TELEGRAM_CHAT_ID = env("TELEGRAM_CHAT_ID", default="")
 CDEK_ACCOUNT = env("CDEK_ACCOUNT", default="")
 CDEK_SECURE_PASSWORD = env("CDEK_SECURE_PASSWORD", default="")
 
-YANDEX_PAY_MERCHANT_ID = env("YANDEX_PAY_MERCHANT_ID", default="")
-YANDEX_PAY_SECRET_KEY = env("YANDEX_PAY_SECRET_KEY", default="")
+YOOKASSA_SHOP_ID = "1110130"
+YOOKASSA_SECRET_KEY = "test_O2XwMhBBKGKQ9Sh9oCuPaMMOo8onBeJ16CN7cIEw3Dk"
+
+# Payment Redirect URLs
+YOOKASSA_SUCCESS_URL = "orders:payment_success"  # URL name for successful payment
+YOOKASSA_FAILURE_URL = "orders:payment_failure"  # URL name for failed payment
 
 SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
 SESSION_COOKIE_HTTPONLY = True

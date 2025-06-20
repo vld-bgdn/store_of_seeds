@@ -12,28 +12,27 @@ class Order(TimeStampedModel):
     """Enhanced order model with delivery and payment info"""
 
     class Status(models.TextChoices):
-        NEW = "new", _("New")
-        PROCESSING = "processing", _("Processing")
-        SHIPPED = "shipped", _("Shipped")
-        DELIVERED = "delivered", _("Delivered")
-        COMPLETED = "completed", _("Completed")
-        CANCELLED = "cancelled", _("Cancelled")
+        NEW = "new", _("Новый")
+        PROCESSING = "processing", _("В процессе")
+        SHIPPED = "shipped", _("Отправлен")
+        DELIVERED = "delivered", _("Доставлен")
+        COMPLETED = "completed", _("Завершен")
+        CANCELLED = "cancelled", _("Отменен")
 
     class DeliveryMethod(models.TextChoices):
-        POST = "post", _("Russian Post")
-        CDEK = "cdek", _("CDEK")
-        PICKUP = "pickup", _("Pickup")
+        POST = "post", _("Почта России")
+        CDEK = "cdek", _("СДЭК")
+        PICKUP = "pickup", _("Самовывоз")
 
     class PaymentMethod(models.TextChoices):
-        YANDEX = "yandex", _("Yandex Pay")
-        CARD = "card", _("Credit Card")
-        CASH = "cash", _("Cash on Delivery")
+        CARD = "card", _("Кредитная карта")
+        CASH = "cash", _("Наличными")
 
     class PaymentStatus(models.TextChoices):
-        PENDING = "pending", _("Pending")
-        PAID = "paid", _("Paid")
-        FAILED = "failed", _("Failed")
-        REFUNDED = "refunded", _("Refunded")
+        PENDING = "pending", _("Ожидает")
+        PAID = "paid", _("Оплачено")
+        FAILED = "failed", _("Сбой")
+        REFUNDED = "refunded", _("Возвращено")
 
     user = models.ForeignKey(
         User,
@@ -44,38 +43,38 @@ class Order(TimeStampedModel):
         null=True,
     )
     status = models.CharField(
-        _("status"), max_length=20, choices=Status.choices, default=Status.NEW
+        _("статус"), max_length=20, choices=Status.choices, default=Status.NEW
     )
     payment_status = models.CharField(
-        _("payment status"),
+        _("статус оплаты"),
         max_length=20,
         choices=PaymentStatus.choices,
         default=PaymentStatus.PENDING,
     )
     payment_method = models.CharField(
-        _("payment method"),
+        _("метод оплаты"),
         max_length=20,
         choices=PaymentMethod.choices,
-        default=PaymentMethod.YANDEX,
+        default=PaymentMethod.CARD,
     )
     delivery_method = models.CharField(
-        _("delivery method"),
+        _("способ доставки"),
         max_length=20,
         choices=DeliveryMethod.choices,
         default=DeliveryMethod.POST,
     )
     delivery_cost = models.DecimalField(
-        _("delivery cost"), max_digits=10, decimal_places=2, default=0
+        _("стоимость доставки"), max_digits=10, decimal_places=2, default=0
     )
     total_cost = models.DecimalField(
-        _("total cost"), max_digits=10, decimal_places=2, default=0
+        _("итого"), max_digits=10, decimal_places=2, default=0
     )
 
     # Contact information
-    first_name = models.CharField(_("first name"), max_length=100)
-    last_name = models.CharField(_("last name"), max_length=100)
-    email = models.EmailField(_("email"))
-    phone = models.CharField(_("phone"), max_length=20)
+    first_name = models.CharField(_("имя"), max_length=100)
+    last_name = models.CharField(_("фамилия"), max_length=100)
+    email = models.EmailField(_("адрес электронной почты"))
+    phone = models.CharField(_("номер телефона"), max_length=20)
 
     # Delivery information
     address = models.TextField(_("address"), blank=True)
@@ -88,9 +87,11 @@ class Order(TimeStampedModel):
     cdek_point_address = models.TextField(_("CDEK point address"), blank=True)
 
     # Additional fields
-    need_consultation = models.BooleanField(_("need consultation"), default=False)
+    need_consultation = models.BooleanField(_("нужна консультация"), default=False)
     notes = models.TextField(_("notes"), blank=True)
-    ip_address = models.GenericIPAddressField(_("IP address"), blank=True, null=True)
+    ip_address = models.GenericIPAddressField(
+        _("IP address"), blank=True, null=True
+    )  # why did I add this?
 
     promo_code = models.ForeignKey(
         "discounts.PromoCode",
@@ -107,13 +108,35 @@ class Order(TimeStampedModel):
         subtotal = sum(item.cost for item in self.items.all())
         return subtotal - self.discount_amount + self.delivery_cost
 
+    payment_id = models.CharField(
+        max_length=100, blank=True, verbose_name="Yookassa Payment ID"
+    )
+    payment_status = models.CharField(
+        max_length=20,
+        choices=[
+            ("pending", "Pending"),
+            ("waiting_for_capture", "Waiting for Capture"),
+            ("succeeded", "Paid"),
+            ("canceled", "Canceled"),
+            ("refunded", "Refunded"),
+        ],
+        default="pending",
+        verbose_name="Статус оплаты",
+    )
+    payment_data = models.JSONField(
+        blank=True, null=True, verbose_name="Ответ Yookassa"
+    )
+    paid_at = models.DateTimeField(
+        blank=True, null=True, verbose_name="Временная метка оплаты"
+    )
+
     class Meta:
         verbose_name = _("Заказ")
         verbose_name_plural = _("Заказы")
         ordering = ["-created"]
 
     def __str__(self):
-        return f"Order #{self.pk}"
+        return f"Order #{self.id} - {self.get_payment_status_display()}"
 
     # def save(self, *args, **kwargs):
     #     if not self.total_cost:
