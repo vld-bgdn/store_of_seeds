@@ -3,6 +3,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from django.utils.html import strip_tags
 
 from .models import Order
 from .telegram import TelegramBot
@@ -93,3 +94,26 @@ def payment_received(order_id):
     # Send Telegram notification
     bot = TelegramBot()
     bot.notify_payment(order)
+
+
+@shared_task
+def send_payment_success_email(order_id):
+    order = Order.objects.get(id=order_id)
+
+    subject = f"Заказ #{order.id} Подтверждение заказа"
+    html_message = render_to_string(
+        "orders/email/email_payment_success.html",
+        {
+            "order": order,
+        },
+    )
+    plain_message = strip_tags(html_message)
+
+    send_mail(
+        subject,
+        plain_message,
+        None,  # Uses DEFAULT_FROM_EMAIL
+        [order.email],  # Assuming Order has an 'email' field
+        html_message=html_message,
+        fail_silently=False,
+    )

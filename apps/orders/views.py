@@ -15,8 +15,9 @@ import json
 from apps.cart.models import Cart
 from .models import Order, OrderItem
 from .forms import OrderCreateForm
+from .tasks import send_payment_success_email
 
-# from .tasks import order_created
+from .tasks import order_created
 
 
 class OrderCreateView(CreateView):
@@ -77,7 +78,7 @@ class OrderCreateView(CreateView):
         cart.clear()
 
         # Send order confirmation email
-        # order_created.delay(order.id) fix after adding email and telegram messaging
+        order_created.delay(order.id)  # fix after adding email and telegram messaging
 
         # Set order in session for payment process
         self.request.session["order_id"] = order.id
@@ -217,6 +218,8 @@ def yookassa_webhook(request):
             order.payment_status = "succeeded"
             order.paid_at = payment.get("captured_at") or payment.get("created_at")
             order.save()
+
+            send_payment_success_email.delay(order.id)
 
         elif event_data["event"] == "payment.canceled":
             payment = event_data["object"]
