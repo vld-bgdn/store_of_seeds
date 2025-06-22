@@ -30,11 +30,11 @@
         </tr>
         <tr>
             <td colspan="2"><strong>Итого:</strong></td>
-            <td>{{ order.total_cost }} ₽</td>
+            <td>{{ order.calculate_total }} ₽</td>
         </tr>
     </table>
 
-    <h2>Контактная информация:</h2>
+    <h3>Контактная информация:</h3>
     <p>Имя: {{ order.first_name }} {{ order.last_name }}</p>
     <p>Email: {{ order.email }}</p>
     <p>Телефон: {{ order.phone }}</p>

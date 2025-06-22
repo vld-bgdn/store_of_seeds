@@ -9,11 +9,12 @@ from .telegram import TelegramBot
 @receiver(post_save, sender=Order)
 def order_status_change_handler(sender, instance, created, **kwargs):
     """Handle order status changes"""
-    # if not created:
-    # Notify about status changes
-    # order_status_changed.delay(instance.id) ## fix when celery
+    if not created:
+        if instance.status != Order.Status.NEW:
+            # Notify about status changes
+            order_status_changed.delay(instance.id)
 
-    # # Notify Telegram about important changes ## fix when telegram
+    # Notify Telegram about important changes ## fix when telegram
     # bot = TelegramBot()
     # if instance.status == Order.Status.SHIPPED:
     #     bot.send_message(

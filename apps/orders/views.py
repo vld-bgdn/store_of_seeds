@@ -17,7 +17,7 @@ from .models import Order, OrderItem
 from .forms import OrderCreateForm
 from .tasks import send_payment_success_email
 
-from .tasks import order_created
+from .tasks import order_created, payment_received
 
 
 class OrderCreateView(CreateView):
@@ -56,7 +56,6 @@ class OrderCreateView(CreateView):
         if self.request.user.is_authenticated:
             order.user = self.request.user
 
-        order.ip_address = self.request.META.get("REMOTE_ADDR")
         order.delivery_cost = self._calculate_delivery_cost(order.delivery_method, cart)
 
         if cart.promo_code and cart.promo_code_applied:
@@ -163,10 +162,7 @@ def create_payment(request, order_id):
     payment = Payment.create(
         {
             "amount": {
-                "value": str(
-                    # order.get_total_cost()
-                    order.calculate_total()
-                ),  # Ensure this method exists in Order model
+                "value": str(order.calculate_total()),
                 "currency": "RUB",
             },
             "confirmation": {
@@ -219,7 +215,7 @@ def yookassa_webhook(request):
             order.paid_at = payment.get("captured_at") or payment.get("created_at")
             order.save()
 
-            send_payment_success_email.delay(order.id)
+            payment_received.delay(order.id)
 
         elif event_data["event"] == "payment.canceled":
             payment = event_data["object"]

@@ -3,39 +3,39 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Order #{{ order.id }} status update</title>
+    <title>Статус заказа #{{ order.id }} обновлен</title>
 </head>
 
 <body>
-    <h1>Order Status Update</h1>
-    <p>Dear {{ order.first_name }},</p>
+    <h1>Статус заказа обновлен</h1>
+    <p>Уважаемый {{ order.first_name }},</p>
 
-    <p>The status of your order <strong>#{{ order.id }}</strong> has been updated to: <strong>{{ status }}</strong></p>
+    <p>Статус Вашего заказа <strong>#{{ order.id }}</strong> был изменен на: <strong>{{ status }}</strong></p>
 
     {% if status == "Shipped" %}
     <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;">
-        <h3>Your order is on the way!</h3>
-        <p>Your order has been shipped and is coming to you.</p>
+        <h3>Ваш заказ следует к Вам</h3>
+        <p>Ваш заказ был отправлен и следует к Вам</p>
     </div>
     {% elif status == "Delivered" %}
     <div style="background-color: #e8f5e9; padding: 15px; border-radius: 5px; margin: 15px 0;">
-        <h3>Your order has arrived!</h3>
-        <p>Your order has been delivered. We hope you enjoy your microgreens!</p>
+        <h3>Ваш заказа доставлен!</h3>
+        <p>Ваш заказ доставлен. Мы надеемся что вы будете довольны нашей микрозеленью!</p>
     </div>
     {% elif status == "Completed" %}
     <div style="background-color: #e3f2fd; padding: 15px; border-radius: 5px; margin: 15px 0;">
-        <h3>Order completed</h3>
-        <p>Your order has been successfully completed. Thank you for shopping with us!</p>
+        <h3>Заказ завершен</h3>
+        <p>Ваш заказ был успешно завершен. Спасибо за то что Вы с нами!</p>
     </div>
     {% endif %}
 
-    <h2>Order Summary</h2>
+    <h2>Заказ</h2>
     <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
         <thead>
             <tr style="background-color: #f8f9fa;">
-                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Product</th>
-                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Quantity</th>
-                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Price</th>
+                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Продукт</th>
+                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Количество</th>
+                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Цена</th>
             </tr>
         </thead>
         <tbody>
@@ -48,14 +48,15 @@
             {% endfor %}
             <tr>
                 <td colspan="2" style="padding: 10px; border: 1px solid #ddd; text-align: right;">
-                    <strong>Total:</strong></td>
+                    <strong>Total:</strong>
+                </td>
                 <td style="padding: 10px; border: 1px solid #ddd;"><strong>{{ order.total_cost }} ₽</strong></td>
             </tr>
         </tbody>
     </table>
 
-    <p>Thank you for shopping with us!</p>
-    <p><strong>Microgreens Store Team</strong></p>
+    <p>Спасибо за покупку!</p>
+    <p><strong>Команда магазина "Микросад"</strong></p>
 </body>
 
 </html>

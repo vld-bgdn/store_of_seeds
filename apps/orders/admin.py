@@ -50,7 +50,6 @@ class OrderAdmin(admin.ModelAdmin):
         "created",
         "modified",
         "total_cost",
-        "ip_address",
         "customer_link",
     ]
     actions = [
@@ -79,7 +78,7 @@ class OrderAdmin(admin.ModelAdmin):
             return format_html('<a href="{}">{}</a>', url, obj.user)
         return "-"
 
-    customer_link.short_description = _("User account")
+    customer_link.short_description = _("Пользователь")
 
     def order_actions(self, obj):
         return format_html(
@@ -98,22 +97,22 @@ class OrderAdmin(admin.ModelAdmin):
     def mark_as_processing(self, request, queryset):
         queryset.update(status=Order.Status.PROCESSING)
 
-    mark_as_processing.short_description = _("Mark selected orders as Processing")
+    mark_as_processing.short_description = _("Пометить заказы как В работе")
 
     def mark_as_shipped(self, request, queryset):
         queryset.update(status=Order.Status.SHIPPED)
 
-    mark_as_shipped.short_description = _("Mark selected orders as Shipped")
+    mark_as_shipped.short_description = _("Пометить заказы как Отправленные")
 
     def mark_as_completed(self, request, queryset):
         queryset.update(status=Order.Status.COMPLETED)
 
-    mark_as_completed.short_description = _("Mark selected orders as Completed")
+    mark_as_completed.short_description = _("Пометить заказы как Завершенные")
 
     def mark_as_paid(self, request, queryset):
         queryset.update(payment_status=Order.PaymentStatus.PAID)
 
-    mark_as_paid.short_description = _("Mark selected orders as Paid")
+    mark_as_paid.short_description = _("Пометить заказа как Оплаченные")
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

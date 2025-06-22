@@ -17,7 +17,7 @@
         {% endfor %}
     </ul>
 
-    <p><strong>Сумма заказа:</strong> {{ order.get_total_cost }} RUB</p>
+    <p><strong>Сумма заказа:</strong> {{ order.calculate_total }} RUB</p>
 
     <p>Детали заказа доступны <a href="{{ site_url }}{% url 'orders:order_detail' order.id %}">здесь</a>.</p>
 

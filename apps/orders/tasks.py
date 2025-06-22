@@ -5,6 +5,11 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.utils.html import strip_tags
 
+# from django.core.mail import send_mail
+# from django.template.loader import render_to_string
+# from django.conf import settings
+from .models import Order
+
 from .models import Order
 from .telegram import TelegramBot
 
@@ -14,34 +19,21 @@ def order_status_changed(order_id):
     """
     Task to send notifications when order status changes
     """
-    from django.core.mail import send_mail
-    from django.template.loader import render_to_string
-    from django.conf import settings
-    from .models import Order
-
     order = Order.objects.get(id=order_id)
 
-    # Email subject based on status
-    subject = f"Order #{order.id} status changed to {order.get_status_display()}"
+    subject = f"Стутс заказа #{order.id} изменен на {order.get_status_display()}"
 
-    # Render email template
     context = {
         "order": order,
         "status": order.get_status_display(),
-        "previous_status": (
-            order.history.latest().prev_record.status
-            if order.history.exists()
-            else None
-        ),
     }
 
-    message = render_to_string("orders/email/order_status_changed.txt", context)
     html_message = render_to_string("orders/email/order_status_changed.html", context)
+    plain_message = strip_tags(html_message)
 
-    # Send email
     send_mail(
         subject,
-        message,
+        plain_message,
         settings.DEFAULT_FROM_EMAIL,
         [order.email],
         html_message=html_message,
@@ -54,13 +46,13 @@ def order_status_changed(order_id):
 def order_created(order_id):
     """Task to send email notification when an order is created"""
     order = Order.objects.get(id=order_id)
-    subject = _("Order #{}").format(order.id)
-    message = _("Thank you for your order!")
+    subject = f"Заказ #{order.id} сформирован"
     html_message = render_to_string("orders/email/order_created.html", {"order": order})
+    plain_message = strip_tags(html_message)
 
     send_mail(
         subject,
-        message,
+        plain_message,
         settings.DEFAULT_FROM_EMAIL,
         [order.email],
         html_message=html_message,
@@ -76,15 +68,15 @@ def order_created(order_id):
 def payment_received(order_id):
     """Task to send email notification when payment is received"""
     order = Order.objects.get(id=order_id)
-    subject = _("Payment received for order #{}").format(order.id)
-    message = _("We have received your payment.")
+    subject = f"Получена оплата по заказу #{order.id}"
     html_message = render_to_string(
         "orders/email/payment_received.html", {"order": order}
     )
+    plain_message = strip_tags(html_message)
 
     send_mail(
         subject,
-        message,
+        plain_message,
         settings.DEFAULT_FROM_EMAIL,
         [order.email],
         html_message=html_message,
@@ -100,7 +92,7 @@ def payment_received(order_id):
 def send_payment_success_email(order_id):
     order = Order.objects.get(id=order_id)
 
-    subject = f"Заказ #{order.id} Подтверждение заказа"
+    subject = f"Заказ #{order.id} оплачен"
     html_message = render_to_string(
         "orders/email/email_payment_success.html",
         {
@@ -112,8 +104,8 @@ def send_payment_success_email(order_id):
     send_mail(
         subject,
         plain_message,
-        None,  # Uses DEFAULT_FROM_EMAIL
-        [order.email],  # Assuming Order has an 'email' field
+        settings.DEFAULT_FROM_EMAIL,
+        [order.email],
         html_message=html_message,
         fail_silently=False,
     )
