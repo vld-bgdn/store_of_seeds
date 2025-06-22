@@ -14,6 +14,8 @@ DEBUG = env.bool("DEBUG", default=True)
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
+CSRF_TRUSTED_ORIGINS = ["https://*.ngrok-free.app"]
+
 INSTALLED_APPS = [
     "jazzmin",
     "django.contrib.admin",

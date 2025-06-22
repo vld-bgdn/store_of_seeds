@@ -43,7 +43,7 @@
                         </a>
                     {% elif order.payment_status == "succeeded" %}
                         <div class="alert alert-success">
-                            This order has been paid on {{ order.paid_at|date:"Y-m-d H:i" }}.
+                            Этот заказ был оплачен {{ order.paid_at|date:"Y-m-d H:i" }}.
                         </div>
                     {% endif %}
                         </button>

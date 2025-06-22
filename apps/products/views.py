@@ -98,4 +98,4 @@ class CategoryListView(ListView):
     context_object_name = "categories"
 
     def get_queryset(self):
-        return Category.objects.filter(parent__isnull=True)
+        return Category.objects.filter(parent__isnull=True).order_by("?")

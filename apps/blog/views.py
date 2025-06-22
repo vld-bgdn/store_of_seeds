@@ -23,9 +23,10 @@ class ArticleListView(ListView):
         context["categories"] = ArticleCategory.objects.annotate(
             article_count=Count("articles", filter=Q(articles__is_published=True))
         ).filter(article_count__gt=0)
-        context["popular_articles"] = Article.objects.filter(
-            is_published=True
-        ).order_by("-view_count")[:5]
+
+        popular_articles = Article.objects.filter(is_published=True).order_by("-view_count")[:5]
+
+        context["popular_articles"] = popular_articles
         return context
 
 

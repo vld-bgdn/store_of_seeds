@@ -76,15 +76,6 @@
                                 {% if cart.promo_code %}Обновить{% else %}Применить{% endif %}
                             </button>
                         </div>
-                        {% if messages %}
-                        {% for message in messages %}
-                        {% if 'promo_code' in message.tags %}
-                        <div class="alert alert-{{ message.tags }} mt-2">
-                            {{ message }}
-                        </div>
-                        {% endif %}
-                        {% endfor %}
-                        {% endif %}
                     </form>
                 </div>
             </div>
@@ -113,7 +104,7 @@
                     </ul>
 
                     <a href="{% url 'orders:order_create' %}" class="btn btn-primary btn-lg w-100">
-                        Продолжить
+                        Оформить заказ
                     </a>
                 </div>
             </div>
