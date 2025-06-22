@@ -1,6 +1,7 @@
-# from django.apps import AppConfig
+from django.apps import AppConfig
 
 
-# class DiscountsConfig(AppConfig):
-#     default_auto_field = "django.db.models.BigAutoField"
-#     name = "discounts"
+class DiscountsConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "apps.discounts"
+    verbose_name = "Discount Management"
