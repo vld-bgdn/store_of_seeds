@@ -3,10 +3,10 @@
 {% block content %}
 <div class="container mt-5">
     <div class="alert alert-danger">
-        <h4>Payment Failed</h4>
-        <p>Your payment for order #{{ order.id }} was not completed.</p>
+        <h4>Ошибка оплаты</h4>
+        <p>Оплата заказа #{{ order.id }} не осуществлена.</p>
         <a href="{% url 'orders:create_payment' order.id %}" class="btn btn-primary">
-            Try Again
+            Попробовать снова
         </a>
     </div>
 </div>

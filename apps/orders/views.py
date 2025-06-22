@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from yookassa import Configuration, Payment, Webhook
 import uuid
+import json
 
 from apps.cart.models import Cart
 from .models import Order, OrderItem
@@ -231,6 +232,20 @@ def yookassa_webhook(request):
 
 def payment_success(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
+    # Check payment status directly with Yookassa
+    if order.payment_id and order.payment_status == "pending":
+        payment = Payment.find_one(order.payment_id)
+
+        if payment.status == "succeeded":
+            order.payment_status = "succeeded"
+            order.paid_at = payment.captured_at or payment.created_at
+            order.save()
+        elif payment.status == "canceled":
+            return redirect("orders:payment_failure", order_id=order.id)
+
+    if order.payment_status != "succeeded":
+        return redirect("orders:payment_failure", order_id=order.id)
+
     return render(request, "orders/payment_success.html", {"order": order})
 
 
