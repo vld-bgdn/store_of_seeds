@@ -133,16 +133,14 @@ def cdek_calculate_delivery(request):
 
 
 def payment_process(request):
-    """Process payment (mock version for Yandex Pay)"""
+    """Process payment"""
     order_id = request.session.get("order_id")
     order = get_object_or_404(Order, id=order_id)
 
     if request.method == "POST":
-        # In a real app, this would verify payment with Yandex Pay API
         order.payment_status = Order.PaymentStatus.PAID
         order.save()
 
-        # Clear the order from session
         if "order_id" in request.session:
             del request.session["order_id"]
 
@@ -155,7 +153,6 @@ def create_payment(request, order_id):
     """Process payment in Yookassa"""
     order = get_object_or_404(Order, id=order_id, user=request.user)
 
-    # Configure Yookassa
     Configuration.account_id = settings.YOOKASSA_SHOP_ID
     Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
 
@@ -171,27 +168,25 @@ def create_payment(request, order_id):
                     reverse(settings.YOOKASSA_SUCCESS_URL, args=[order.id])
                 ),
             },
-            "capture": True,  # Auto-capture payment (no manual confirmation needed)
+            "capture": True,
             "description": f"Order #{order.id}",
             "metadata": {
                 "order_id": order.id,
                 "user_id": request.user.id,
             },
-            "idempotency_key": str(uuid.uuid4()),  # Prevent duplicate payments
+            "idempotency_key": str(uuid.uuid4()),
         }
     )
 
-    # Update order with payment details
     order.payment_id = payment.id
     order.payment_status = "pending"
-    order.payment_data = payment.json()  # Store raw Yookassa response
+    order.payment_data = payment.json()
     order.save()
 
-    # Redirect user to Yookassa payment page
     return redirect(payment.confirmation.confirmation_url)
 
 
-@csrf_exempt  # Disable CSRF for Yookassa webhook
+@csrf_exempt
 def yookassa_webhook(request):
     if request.method != "POST":
         return HttpResponse(status=405)
@@ -199,7 +194,6 @@ def yookassa_webhook(request):
     try:
         event_data = json.loads(request.body)
 
-        # Verify webhook signature (optional but recommended)
         if hasattr(settings, "YOOKASSA_WEBHOOK_AUTH_KEY"):
             signature = request.headers.get("Content-Signature", "")
             if not Webhook().is_valid_signature(
@@ -207,7 +201,6 @@ def yookassa_webhook(request):
             ):
                 return HttpResponse(status=400)
 
-        # Handle payment events
         if event_data["event"] == "payment.succeeded":
             payment = event_data["object"]
             order = Order.objects.get(id=payment["metadata"]["order_id"])
@@ -231,7 +224,7 @@ def yookassa_webhook(request):
 
 def payment_success(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
-    # Check payment status directly with Yookassa
+
     if order.payment_id and order.payment_status == "pending":
         payment = Payment.find_one(order.payment_id)
 
