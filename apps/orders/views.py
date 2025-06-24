@@ -73,6 +73,8 @@ class OrderCreateView(CreateView):
                 quantity=cart_item.quantity,
             )
 
+        order.total_cost = order.calculate_total()
+        order.save()
         # Clear the cart
         cart.clear()
 
@@ -82,7 +84,7 @@ class OrderCreateView(CreateView):
         # Set order in session for payment process
         self.request.session["order_id"] = order.id
 
-        messages.success(self.request, _("Ваш заказ успешно добавлен"))
+        messages.success(self.request, _("Ваш заказ сформирован"))
 
         return redirect(reverse_lazy("orders:payment_process"))
 

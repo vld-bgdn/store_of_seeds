@@ -124,11 +124,6 @@ class Order(TimeStampedModel):
         # subtotal = sum(item.cost for item in self.items.all())
         return self.subtotal - self.discount_amount + self.delivery_cost
 
-    # def save(self, *args, **kwargs):
-    #     if not self.total_cost:
-    #         self.total_cost = self.calculate_total()
-    #     super().save(*args, **kwargs)
-
     # def calculate_total(self):
     #     return sum(item.cost for item in self.items.all()) + self.delivery_cost
 
@@ -142,7 +137,27 @@ class Order(TimeStampedModel):
                 self.discount_amount = self.promo_code.apply_discount(self.subtotal)
             else:
                 self.discount_amount = 0
+        # if not self.total_cost:
+        #     self.total_cost = self.calculate_total()
         super().save(*args, **kwargs)
+
+    # def save(self, *args, **kwargs):
+    #     # Set discount amount first
+    #     if not hasattr(self, "discount_amount") or not self.discount_amount:
+    #         if self.promo_code:
+    #             self.discount_amount = self.promo_code.apply_discount(self.subtotal)
+    #         else:
+    #             self.discount_amount = 0
+
+    #     # Save first to get primary key
+    #     is_new = self.pk is None
+    #     super().save(*args, **kwargs)
+
+    #     # Now calculate total if it's a new order or total_cost is not set
+    #     if is_new or not self.total_cost:
+    #         self.total_cost = self.calculate_total()
+    #         # Update without triggering save again
+    #         Order.objects.filter(pk=self.pk).update(total_cost=self.total_cost)
 
     payment_id = models.CharField(
         max_length=100, blank=True, verbose_name="ID оплаты в Yookassa"

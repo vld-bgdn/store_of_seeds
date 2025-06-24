@@ -31,22 +31,22 @@
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <strong>Итого:</strong>
-                                    <strong>{{ order.total_with_discount }} ₽</strong>
+                                    <strong>{{ order.total_cost }} ₽</strong>
                                 </li>
                             </ul>
                         </div>
                     </div>
                     <!-- Payment method specific content -->
                     {% if order.payment_status == "pending" %}
-                        <a href="{% url 'orders:create_payment' order.id %}" class="btn btn-success">
-                            Оплатить
-                        </a>
+                    <a href="{% url 'orders:create_payment' order.id %}" class="btn btn-success">
+                        Оплатить
+                    </a>
                     {% elif order.payment_status == "succeeded" %}
-                        <div class="alert alert-success">
-                            Этот заказ был оплачен {{ order.paid_at|date:"Y-m-d H:i" }}.
-                        </div>
+                    <div class="alert alert-success">
+                        Этот заказ был оплачен {{ order.paid_at|date:"Y-m-d H:i" }}.
+                    </div>
                     {% endif %}
-                        </button>
+                    </button>
                     </form>
                 </div>
             </div>

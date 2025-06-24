@@ -30,8 +30,9 @@ class UserProfile(models.Model):
     department = models.CharField(_("Отдел"), max_length=100, blank=True)
     employee_id = models.CharField(_("Идентификатор"), max_length=20, blank=True)
 
-    def __str__(self):
-        return f"{self.user.username} - {self.get_user_type_display()}"
+    def get_user_orders(self):
+        """Get all orders for this user"""
+        return self.user.order_set.all().order_by("-created_at")
 
     @property
     def is_customer(self):
@@ -40,6 +41,9 @@ class UserProfile(models.Model):
     @property
     def is_internal_staff(self):
         return self.user_type in ["staff", "admin"]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.get_user_type_display()}"
 
 
 @receiver(post_save, sender=User)

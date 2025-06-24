@@ -31,7 +31,7 @@ class TelegramBot:
             f"Имя: {order.first_name} {order.last_name}\n"
             f"Телефон: {order.phone}\n"
             f"Email: {order.email}\n"
-            f"Сумма: {order.total_cost} ₽\n"
+            f"Сумма: {order.calculate_total} ₽\n"
             f"Способ доставки: {order.get_delivery_method_display()}\n"
             f"Способ оплаты: {order.get_payment_method_display()}\n"
         )
@@ -46,6 +46,6 @@ class TelegramBot:
         text = (
             f"<b>Оплачен заказ #{order.id}</b>\n"
             f"Статус: {order.get_payment_status_display()}\n"
-            f"Сумма: {order.total_cost} ₽\n"
+            f"Сумма: {order.calculate_total} ₽\n"
         )
         return self.send_message(text)

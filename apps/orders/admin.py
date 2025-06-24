@@ -26,7 +26,7 @@ class OrderAdmin(admin.ModelAdmin):
         "created",
         "status",
         "payment_status",
-        "total_cost",
+        "calculate_total",
         "order_actions",  # Changed from "actions" to "order_actions"
     ]
     list_filter = [
@@ -49,7 +49,7 @@ class OrderAdmin(admin.ModelAdmin):
     readonly_fields = [
         "created",
         "modified",
-        "total_cost",
+        "calculate_total",
         "customer_link",
     ]
     actions = [

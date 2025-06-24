@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" alt="Avatar" class="rounded-circle mb-3"
+                        style="width: 100px; height: 100px; object-fit: cover;">
+                    {% else %}
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mb-3 mx-auto"
+                        style="width: 100px; height: 100px;">
+                        <i class="fas fa-user text-white fa-3x"></i>
+                    </div>
+                    {% endif %}
+                    <h5>{{ user.first_name|default:user.username }}</h5>
+                    <p class="text-muted">{{ profile.get_user_type_display }}</p>
+                </div>
+            </div>
+
+            <div class="list-group mt-3">
+                <a href="{% url 'accounts:profile' %}" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-user me-2"></i>Профиль
+                </a>
+                <a href="{% url 'accounts:profile_edit' %}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-edit me-2"></i>Редактировать профиль
+                </a>
+                <a href="{% url 'accounts:change_password' %}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-lock me-2"></i>Изменить пароль
+                </a>
+                <a href="{% url 'accounts:orders_list' %}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-shopping-bag me-2"></i>Мои заказы
+                </a>
+                <a href="{% url 'accounts:logout' %}" class="list-group-item list-group-item-action text-danger">
+                    <i class="fas fa-sign-out-alt me-2"></i>Выйти
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-user me-2"></i>Информация о профиле</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>Имя:</th>
+                                    <td>{{ user.first_name|default:"Не указано" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Фамилия:</th>
+                                    <td>{{ user.last_name|default:"Не указано" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Имя пользователя:</th>
+                                    <td>{{ user.username }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Email:</th>
+                                    <td>{{ user.email|default:"Не указан" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>Телефон:</th>
+                                    <td>{{ profile.phone|default:"Не указан" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Адрес:</th>
+                                    <td>{{ profile.address|default:"Не указан" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Дата регистрации:</th>
+                                    <td>{{ user.date_joined|date:"d.m.Y" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Последний вход:</th>
+                                    <td>{{ user.last_login|date:"d.m.Y H:i"|default:"Никогда" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    {% if profile.bio %}
+                    <div class="mt-3">
+                        <h6>О себе:</h6>
+                        <p class="text-muted">{{ profile.bio }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-4">
+                        <a href="{% url 'accounts:profile_edit' %}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>Редактировать профиль
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between">
+                    <h5><i class="fas fa-shopping-bag me-2"></i>Последние заказы</h5>
+                    <a href="{% url 'accounts:orders_list' %}" class="btn btn-sm btn-outline-primary">Все заказы</a>
+                </div>
+                <div class="card-body">
+                    {% if recent_orders %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>№ заказа</th>
+                                    <th>Дата</th>
+                                    <th>Статус</th>
+                                    <th>Сумма</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td>#{{ order.id }}</td>
+                                    <td>{{ order.created|date:"d.m.Y" }}</td>
+                                    <td>
+                                        {% if order.status == 'pending' %}
+                                        <span class="badge bg-warning text-dark">В обработке</span>
+                                        {% elif order.status == 'confirmed' %}
+                                        <span class="badge bg-info">Подтвержден</span>
+                                        {% elif order.status == 'shipped' %}
+                                        <span class="badge bg-primary">Отправлен</span>
+                                        {% elif order.status == 'delivered' %}
+                                        <span class="badge bg-success">Доставлен</span>
+                                        {% elif order.status == 'cancelled' %}
+                                        <span class="badge bg-danger">Отменен</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+                                        {% endif %}
+                                        </span>
+                                    </td>
+                                    <td>{{ order.total_cost }} ₽</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">У вас пока нет заказов</h5>
+                        <p class="text-muted">Начните покупки в нашем магазине!</p>
+                        <a href="{% url 'products:category_list' %}" class="btn btn-primary">
+                            Перейти к покупкам
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+{% endblock %}
