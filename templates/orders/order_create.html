@@ -1,154 +1,196 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
+{% load l10n %}
 
 {% block title %}Оформление заказа{% endblock %}
 
 {% block content %}
 <div class="container my-5">
-    <h1 class="mb-4">Заказ</h1>
-
-    <div class="row">
-        <div class="col-md-8">
-            <form method="post" id="orderForm">
-                {% csrf_token %}
-                <!-- Contact Information -->
-                <div class="card mb-4">
-                    <div class="card-header">Контактная информация</div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Имя*</label>
-                                {{ form.first_name }}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Фамилия*</label>
-                                {{ form.last_name }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Email*</label>
-                                {{ form.email }}
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Телефон*</label>
-                                {{ form.phone }}
-                            </div>
-                    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Оформление заказа</h4>
                 </div>
-                <!-- Delivery Method -->
-                <div class="card mb-4">
-                    <div class="card-header">Доставка</div>
-                    <div class="card-body">
-                        {{ form.delivery_method }}
-                        <div id="postFields" class="delivery-fields mt-3">
-                            <h5>Доставка Почтой России</h5>
-                            <p>Стоимость: 200 ₽</p>
-                            <div class="mb-3">
-                                <label class="form-label">Адрес*</label>
-                                {{ form.address }}
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Personal Information -->
+                        <div class="mb-4">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-user me-2"></i>Личная информация
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        {{ form.first_name }}
+                                    </div>
+                                    {% if form.first_name.errors %}
+                                    <div class="text-danger small">{{ form.first_name.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        {{ form.last_name }}
+                                    </div>
+                                    {% if form.last_name.errors %}
+                                    <div class="text-danger small">{{ form.last_name.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">Индекс*</label>
-                                    {{ form.postal_code }}
+                                <div class="col-md-6 mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        {{ form.email }}
+                                    </div>
+                                    {% if form.email.errors %}
+                                    <div class="text-danger small">{{ form.email.errors.0 }}</div>
+                                    {% endif %}
                                 </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">Город*</label>
-                                    {{ form.city }}
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">Страна*</label>
-                                    {{ form.country }}
+                                <div class="col-md-6 mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                        {{ form.phone }}
+                                    </div>
+                                    {% if form.phone.errors %}
+                                    <div class="text-danger small">{{ form.phone.errors.0 }}</div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
-                        <div id="cdekFields" class="delivery-fields mt-3" style="display: none;">
-                            <h5>Доставка СДЭК</h5>
+
+                        <!-- Delivery Method -->
+                        <div class="mb-4">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-truck me-2"></i>Способ доставки
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="delivery_method" id="post"
+                                            value="post" {% if form.delivery_method.value == 'post' %}checked{% endif %}>
+                                        <label class="form-check-label" for="post">
+                                            <i class="fas fa-mail-bulk me-1"></i>Почта России (200₽)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="delivery_method" id="cdek"
+                                            value="cdek" {% if form.delivery_method.value == 'cdek' %}checked{% endif %}>
+                                        <label class="form-check-label" for="cdek">
+                                            <i class="fas fa-shipping-fast me-1"></i>СДЭК (300₽)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="delivery_method" id="pickup"
+                                            value="pickup" {% if form.delivery_method.value == 'pickup' %}checked{% endif %}>
+                                        <label class="form-check-label" for="pickup">
+                                            <i class="fas fa-store me-1"></i>Самовывоз (бесплатно)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if form.delivery_method.errors %}
+                            <div class="text-danger small">{{ form.delivery_method.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Delivery Fields -->
+                        <div id="postFields" class="delivery-fields mb-4" style="display: none;">
+                            <h6 class="text-secondary mb-3">Адрес доставки почтой</h6>
                             <div class="mb-3">
-                                <label class="form-label">Город*</label>
-                                <input type="text" class="form-control" id="cdekCity" name="cdek_city">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Пункт выдачи*</label>
-                                <select class="form-select" id="cdekPoint" name="cdek_point">
-                                    <option value="">Выберите пункт выдачи</option>
-                                </select>
-                            </div>
-                            <p id="cdekCost">Стоимость: рассчитывается...</p>
-                        </div>
-                        <div id="pickupFields" class="delivery-fields mt-3" style="display: none;">
-                            <h5>Самовывоз</h5>
-                            <p>Адрес: г. Москва, ул. Примерная, 10</p>
-                            <p>Стоимость: бесплатно</p>
-                    </div>
-                </div>
-                <!-- Payment Method -->
-                <div class="card mb-4">
-                    <div class="card-header">Способ оплаты</div>
-                    <div class="card-body">
-                        {{ form.payment_method }}
-                    </div>
-                </div>
-                <!-- Additional Information -->
-                <div class="card mb-4">
-                    <div class="card-header">Дополнительная информация</div>
-                    <div class="card-body">
-                        {{ form.notes }}
-                        <div class="form-check mt-3">
-                            {{ form.need_consultation }}
-                            <label class="form-check-label" for="{{ form.need_consultation.id_for_label }}">
-                                Нужна консультация по проращиванию
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-lg w-100">
-                {% if payment_method == card %}
-                    Сформировать и оплатить
-                {% elif payment_method == cash %}
-                    Сформировать
-                {% endif %}
-                </button>
-            </form>
-        </div>
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Сумма заказа</div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush mb-3">
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Исходная сумма</span>
-                            <span>{{ cart.subtotal }} ₽</span>
-                        </li>
-                        {% if cart.promo_code %}
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Скидка ({{ cart.promo_code.code }})</span>
-                            <span class="text-danger">-{{ cart.discount_amount }} ₽</span>
-                        </li>
-                        {% endif %}
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Стоимость доставки</span>
-                            <span>{{ delivery_cost }} ₽</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <strong>Итого</strong>
-                            <strong>
-                                {% if cart.promo_code %}
-                                    {{ cart.total|add:delivery_cost }} ₽
-                                {% else %}
-                                    {{ cart.subtotal|add:delivery_cost }} ₽
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    {{ form.address }}
+                                </div>
+                                {% if form.address.errors %}
+                                <div class="text-danger small">{{ form.address.errors.0 }}</div>
                                 {% endif %}
-                            </strong>
-                        </li>
-                    </ul>
-                    {% if cart.promo_code %}
-                    <div class="alert alert-success">
-                        Промо код <strong>{{ cart.promo_code.code }}</strong> применен
-                    </div>
-                    {% else %}
-                    <p class="text-muted">Ваша корзина пуста</p>
-                    {% endif %}
+                            </div>
+                        </div>
+
+                        <div id="cdekFields" class="delivery-fields mb-4" style="display: none;">
+                            <h6 class="text-secondary mb-3">Адрес доставки СДЭК</h6>
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    {{ form.address }}
+                                </div>
+                                {% if form.address.errors %}
+                                <div class="text-danger small">{{ form.address.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div id="pickupFields" class="delivery-fields mb-4" style="display: none;">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Самовывоз:</strong> г. Москва, ул. Примерная, д. 123
+                                <br><small>Время работы: Пн-Пт 10:00-18:00</small>
+                            </div>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="mb-4">
+                            <h5><i class="fas fa-credit-card text-primary me-2"></i>Способ оплаты</h5>
+                            {{ form.payment_method }}
+                        </div>
+
+                        <!-- Additional Comments -->
+                        <div class="mb-4">
+                            <h5><i class="fas fa-info-circle text-primary me-2"></i>Дополнительная информация</h5>
+                            {{ form.notes }}
+                            <div class="form-check mt-3">
+                                {{ form.need_consultation }}
+                                <label class="form-check-label" for="{{ form.need_consultation.id_for_label }}">
+                                    <i class="fas fa-question-circle me-1"></i>Нужна консультация по проращиванию
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Order Summary -->
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">
+                                    <i class="fas fa-receipt me-2"></i>Итого к оплате
+                                </h5>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p class="mb-1">Товары:</p>
+                                        {% if cart.promo_code %}
+                                        <p class="mb-1 text-success">Скидка ({{ cart.promo_code.code }}):</p>
+                                        {% endif %}
+                                        <p class="mb-1">Доставка:</p>
+                                        <hr>
+                                        <strong>Итого:</strong>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <p class="mb-1">{{ cart.subtotal }}₽</p>
+                                        {% if cart.promo_code %}
+                                        <p class="mb-1 text-success">-{{ cart.discount_amount }}₽</p>
+                                        {% endif %}
+                                        <p class="mb-1"><span id="deliveryCost">200</span>₽</p>
+                                        <hr>
+                                        <strong><span id="totalCost">{% if cart.promo_code %}{{ cart.total|add:200 }}{% else %}{{ cart.subtotal|add:200 }}{% endif %}</span>₽</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-credit-card me-2"></i>Оформить заказ
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -157,5 +199,74 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/orders.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deliveryRadios = document.querySelectorAll('input[name="delivery_method"]');
+    const deliveryFields = document.querySelectorAll('.delivery-fields');
+    const deliveryCostSpan = document.getElementById('deliveryCost');
+    const totalCostSpan = document.getElementById('totalCost');
+
+    // Get base total from template - use unlocalize to get dot format
+    const baseTotalNum = parseFloat('{% if cart.promo_code %}{{ cart.total|unlocalize }}{% else %}{{ cart.subtotal|unlocalize }}{% endif %}');
+
+    const deliveryCosts = {
+        'post': 200,
+        'cdek': 300,
+        'pickup': 0
+    };
+
+    function updateDeliveryFields(selectedMethod) {
+        console.log('Updating delivery fields for:', selectedMethod);
+
+        // Hide all delivery fields
+        deliveryFields.forEach(field => {
+            field.style.display = 'none';
+        });
+
+        // Show selected delivery fields
+        const targetField = document.getElementById(selectedMethod + 'Fields');
+        if (targetField) {
+            targetField.style.display = 'block';
+            console.log('Showing field:', selectedMethod + 'Fields');
+        }
+
+        // Update delivery cost
+        const newDeliveryCost = deliveryCosts[selectedMethod] || 0;
+        if (deliveryCostSpan) {
+            deliveryCostSpan.textContent = newDeliveryCost;
+        }
+        if (totalCostSpan) {
+            const newTotal = baseTotalNum + newDeliveryCost;
+            totalCostSpan.textContent = newTotal.toFixed(2).replace('.', ','); // Convert back to comma format for display
+        }
+
+        console.log('New delivery cost:', newDeliveryCost);
+        console.log('New total:', baseTotalNum + newDeliveryCost);
+    }
+
+    // Initialize with default selection
+    const checkedRadio = document.querySelector('input[name="delivery_method"]:checked');
+    if (checkedRadio) {
+        updateDeliveryFields(checkedRadio.value);
+        console.log('Initial method:', checkedRadio.value);
+    } else {
+        // Default to post if nothing is selected
+        const postRadio = document.getElementById('post');
+        if (postRadio) {
+            postRadio.checked = true;
+            updateDeliveryFields('post');
+        }
+    }
+
+    // Handle delivery method changes
+    deliveryRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            console.log('Radio changed to:', this.value);
+            if (this.checked) {
+                updateDeliveryFields(this.value);
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

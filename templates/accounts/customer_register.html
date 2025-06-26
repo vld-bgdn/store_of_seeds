@@ -7,7 +7,6 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
-            <!-- Registration Form Card -->
             <div class="card shadow">
                 <div class="card-header bg-primary text-white text-center">
                     <h4>Регистрация</h4>
@@ -25,7 +24,6 @@
                     <form method="post">
                         {% csrf_token %}
 
-                        <!-- Username Field -->
                         <div class="mb-3">
                             <label for="{{ form.username.id_for_label }}" class="form-label">
                                 {{ form.username.label }}
@@ -46,67 +44,6 @@
                             {% endif %}
                         </div>
 
-                        <!-- Email Field -->
-                        {% if form.email %}
-                        <div class="mb-3">
-                            <label for="{{ form.email.id_for_label }}" class="form-label">
-                                <i class="fas fa-envelope me-2"></i>{{ form.email.label }}
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                {{ form.email }}
-                            </div>
-                            {% if form.email.errors %}
-                            <div class="text-danger small mt-1">
-                                {% for error in form.email.errors %}
-                                <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% endif %}
-
-                        <!-- First Name Field -->
-                        {% if form.first_name %}
-                        <div class="mb-3">
-                            <label for="{{ form.first_name.id_for_label }}" class="form-label">
-                                <i class="fas fa-id-card me-2"></i>{{ form.first_name.label }}
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                {{ form.first_name }}
-                            </div>
-                            {% if form.first_name.errors %}
-                            <div class="text-danger small mt-1">
-                                {% for error in form.first_name.errors %}
-                                <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% endif %}
-
-                        <!-- Last Name Field -->
-                        {% if form.last_name %}
-                        <div class="mb-3">
-                            <label for="{{ form.last_name.id_for_label }}" class="form-label">
-                                <i class="fas fa-id-card me-2"></i>{{ form.last_name.label }}
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                {{ form.last_name }}
-                            </div>
-                            {% if form.last_name.errors %}
-                            <div class="text-danger small mt-1">
-                                {% for error in form.last_name.errors %}
-                                <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% endif %}
-
-                        <!-- Password1 Field -->
                         <div class="mb-3">
                             <label for="{{ form.password1.id_for_label }}" class="form-label">
                                 {{ form.password1.label }}
@@ -127,7 +64,6 @@
                             {% endif %}
                         </div>
 
-                        <!-- Password2 Field -->
                         <div class="mb-3">
                             <label for="{{ form.password2.id_for_label }}" class="form-label">
                                 {{ form.password2.label }}
@@ -145,7 +81,6 @@
                             {% endif %}
                         </div>
 
-                        <!-- Non-field errors -->
                         {% if form.non_field_errors %}
                         <div class="alert alert-danger" role="alert">
                             {% for error in form.non_field_errors %}
@@ -154,7 +89,6 @@
                         </div>
                         {% endif %}
 
-                        <!-- Submit Button -->
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="fas fa-user-plus me-2"></i>Зарегистрироваться
@@ -164,7 +98,7 @@
                 </div>
                 <div class="card-footer text-center bg-light">
                     <p class="mb-0">
-                        Уже есть аккаунт? 
+                        Уже есть аккаунт?
                         <a href="{% url 'accounts:login' %}" class="text-decoration-none">
                             <i class="fas fa-sign-in-alt me-1"></i>Войдите
                         </a>
@@ -195,10 +129,10 @@
 {% block extra_js %}
 <script>
     // Add Bootstrap classes to form fields
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Add form-control class to all form inputs
         const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
-        inputs.forEach(function(input) {
+        inputs.forEach(function (input) {
             input.classList.add('form-control');
         });
     });

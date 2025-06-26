@@ -127,7 +127,7 @@ def user_login(request):
             return redirect(next_url)
         else:
             return render(
-                request, "accounts/login.html", {"error": "Invalid credentials"}
+                request, "accounts/login.html", {"error": "Неверные учетные данные"}
             )
     return render(request, "accounts/login.html")
 
