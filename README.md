@@ -1,3 +1,42 @@
+# Folder structure
+```
+├── apps
+│   ├── accounts
+│   │   └── migrations
+│   ├── blog
+│   │   └── migrations
+│   ├── cart
+│   │   └── migrations
+│   ├── discounts
+│   │   └── migrations
+│   ├── orders
+│   │   └── migrations
+│   ├── pages
+│   │   └── migrations
+│   ├── products
+│   │   ├── migrations
+│   │   └── templatetags
+│   └── reports
+│       └── migrations
+├── config
+│   └── settings
+├── media
+│   ├── avatars
+│   ├── categories
+│   └── products
+├── static
+└── templates
+    ├── accounts
+    ├── blog
+    ├── cart
+    ├── includes
+    ├── orders
+    │   └── email
+    ├── pages
+    │   └── admin
+    ├── products
+    └── reports
+```
 Step 1: Create and Run Migrations
 First, you need to create migrations for your custom User model and then apply them:
 # Create migrations for all apps
