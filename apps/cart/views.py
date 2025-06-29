@@ -26,7 +26,7 @@ def apply_promo_code(request):
             cart.remove_promo_code()
             messages.success(
                 request,
-                _("Промо код успешно удален"),  # extra_tags="promo_code"
+                _("Промо код успешно удален"),
             )
         elif promo_code:
             try:
@@ -39,21 +39,18 @@ def apply_promo_code(request):
                     messages.success(
                         request,
                         _("Пром код успешно применен"),
-                        # extra_tags="promo_code",
                     )
                 else:
                     cart.remove_promo_code()
                     messages.error(
                         request,
                         _("Промокод больше не действует"),
-                        # extra_tags="promo_code",
                     )
             except PromoCode.DoesNotExist:
                 cart.remove_promo_code()
                 messages.error(
                     request,
                     _("Неверный промо код"),
-                    # extra_tags="promo_code"
                 )
 
     return redirect("cart:cart_detail")

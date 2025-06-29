@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from django.utils.http import url_has_allowed_host_and_scheme
 from .forms import ProfileUpdateForm, CustomPasswordChangeForm
 from apps.orders.models import Order
+from apps.cart.models import Cart
 
 
 def customer_register(request):
@@ -21,8 +22,22 @@ def customer_register(request):
             profile.user_type = "customer"
             profile.save()
 
-            messages.success(request, "Регистрация прошла успешно! Добро пожаловать!")
+            session_key = request.session.session_key
+            session_cart = None
+
+            if session_key:
+                try:
+                    session_cart = Cart.objects.get(session_key=session_key)
+                except Cart.DoesNotExist:
+                    pass
+
             login(request, user)
+
+            if session_cart and session_cart.has_items():
+                user_cart, created = Cart.objects.get_or_create(user=user)
+                Cart.objects.merge_carts(session_cart, user_cart)
+
+            messages.success(request, "Регистрация прошла успешно! Добро пожаловать!")
 
             next_url = request.POST.get("next") or request.GET.get("next")
             if next_url and url_has_allowed_host_and_scheme(
@@ -127,7 +142,6 @@ def orders_list(request):
 
 def user_login(request):
     """Enhanced login view with better redirect handling"""
-
     if request.user.is_authenticated:
         next_url = request.GET.get("next")
         if next_url and url_has_allowed_host_and_scheme(next_url, request.get_host()):
@@ -140,13 +154,25 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
+            session_key = request.session.session_key
+            session_cart = None
+
+            if session_key:
+                try:
+                    session_cart = Cart.objects.get(session_key=session_key)
+                except Cart.DoesNotExist:
+                    pass
+
             login(request, user)
+
+            if session_cart and session_cart.has_items():
+                user_cart, created = Cart.objects.get_or_create(user=user)
+                Cart.objects.merge_carts(session_cart, user_cart)
 
             messages.success(
                 request, f"Добро пожаловать, {user.first_name or user.username}!"
             )
 
-            # Handle redirect after login
             next_url = request.POST.get("next") or request.GET.get("next")
             if next_url and url_has_allowed_host_and_scheme(
                 next_url, request.get_host()
@@ -170,6 +196,7 @@ def user_login(request):
 def user_logout(request):
     """Enhanced logout view"""
     username = request.user.username if request.user.is_authenticated else None
+
     logout(request)
 
     if username:

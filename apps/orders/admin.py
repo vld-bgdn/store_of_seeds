@@ -26,7 +26,7 @@ class OrderAdmin(admin.ModelAdmin):
         "created",
         "status",
         "payment_status",
-        "calculate_total",
+        "total_cost",
         "order_actions",  # Changed from "actions" to "order_actions"
     ]
     list_filter = [
@@ -49,7 +49,6 @@ class OrderAdmin(admin.ModelAdmin):
     readonly_fields = [
         "created",
         "modified",
-        "calculate_total",
         "customer_link",
     ]
     actions = [
@@ -64,17 +63,9 @@ class OrderAdmin(admin.ModelAdmin):
 
     customer_info.short_description = _("Покупатель")
 
-    # def customer_link(self, obj):
-    #     if obj.user:
-    #         url = reverse("admin:users_user_change", args=[obj.user.id])
-    #         return format_html('<a href="{}">{}</a>', url, obj.user)
-    #     return "-"
-
     def customer_link(self, obj):
         if obj.user:
-            url = reverse(
-                "admin:auth_user_change", args=[obj.user.id]
-            )  # Changed from users_user_change
+            url = reverse("admin:auth_user_change", args=[obj.user.id])
             return format_html('<a href="{}">{}</a>', url, obj.user)
         return "-"
 
@@ -83,17 +74,11 @@ class OrderAdmin(admin.ModelAdmin):
     def order_actions(self, obj):
         return format_html(
             '<a class="button" href="{}">Просмотр</a>&nbsp;',
-            # '<a class="button" href="{}">Invoice</a>',
             reverse("admin:orders_order_change", args=[obj.id]),
-            # reverse("orders:admin_order_invoice", args=[obj.id]),
         )
 
     order_actions.short_description = _("Действия")
-    # order_actions.allow_tags = (
-    #     True  # Note: allow_tags is deprecated in newer Django versions
-    # )
 
-    # Custom actions
     def mark_as_processing(self, request, queryset):
         queryset.update(status=Order.Status.PROCESSING)
 

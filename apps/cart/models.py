@@ -1,6 +1,5 @@
 from django.db import models
-
-# from django.conf import settings
+from django.contrib.auth.models import User
 from apps.products.models import Product
 from apps.discounts.models import PromoCode, PromoCodeUse
 from django.utils.translation import gettext_lazy as _
@@ -8,14 +7,49 @@ from django.utils.translation import gettext_lazy as _
 
 class CartManager(models.Manager):
     def get_or_create_cart(self, request):
-        if not request.session.session_key:
-            request.session.create()
-        cart, created = self.get_or_create(session_key=request.session.session_key)
-        return cart
+        if request.user.is_authenticated:
+
+            cart, created = self.get_or_create(user=request.user)
+            return cart
+        else:
+
+            if not request.session.session_key:
+                request.session.create()
+            cart, created = self.get_or_create(session_key=request.session.session_key)
+            return cart
+
+    def merge_carts(self, session_cart, user_cart):
+        """Merge session cart into user cart"""
+        for session_item in session_cart.items.all():
+            user_item, created = CartItem.objects.get_or_create(
+                cart=user_cart,
+                product=session_item.product,
+                defaults={
+                    "quantity": session_item.quantity,
+                    "price": session_item.price,
+                },
+            )
+
+            if not created:
+                user_item.quantity += session_item.quantity
+                user_item.save()
+
+        if session_cart.promo_code and not user_cart.promo_code:
+            user_cart.promo_code = session_cart.promo_code
+            user_cart.promo_code_applied = session_cart.promo_code_applied
+            user_cart.save()
+
+        session_cart.clear()
+        session_cart.delete()
 
 
 class Cart(models.Model):
-    session_key = models.CharField(_("session key"), max_length=40, db_index=True)
+    user = models.OneToOneField(
+        User, verbose_name=_("user"), on_delete=models.CASCADE, null=True, blank=True
+    )
+    session_key = models.CharField(
+        _("session key"), max_length=40, db_index=True, null=True, blank=True
+    )
     created = models.DateTimeField(_("created"), auto_now_add=True)
     updated = models.DateTimeField(_("updated"), auto_now=True)
     promo_code = models.ForeignKey(
@@ -34,8 +68,7 @@ class Cart(models.Model):
         self.promo_code_applied = True
         self.save()
 
-        # Increment promo code usage if user is authenticated
-        if hasattr(self, "user") and self.user:
+        if self.user:
             PromoCodeUse.objects.create(
                 promo_code=promo_code,
                 user=self.user,
@@ -54,12 +87,24 @@ class Cart(models.Model):
         verbose_name_plural = _("carts")
         ordering = ["-created"]
 
-    def __str__(self):
-        return f"Cart {self.pk}"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user"],
+                condition=models.Q(user__isnull=False),
+                name="unique_user_cart",
+            ),
+            models.UniqueConstraint(
+                fields=["session_key"],
+                condition=models.Q(session_key__isnull=False),
+                name="unique_session_cart",
+            ),
+        ]
 
-    # @property
-    # def subtotal(self):
-    #     return sum(item.price * item.quantity for item in self.items.all())
+    def __str__(self):
+        if self.user:
+            return f"Cart for {self.user.username}"
+        return f"Cart {self.pk} (session: {self.session_key})"
+
     @property
     def subtotal(self):
         return sum(item.total_price for item in self.items.all())
@@ -113,4 +158,3 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity}x {self.product.name}"
-
