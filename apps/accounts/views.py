@@ -1,9 +1,11 @@
+# apps/accounts/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.utils.http import url_has_allowed_host_and_scheme
 from .forms import ProfileUpdateForm, CustomPasswordChangeForm
 from apps.orders.models import Order
 
@@ -14,18 +16,31 @@ def customer_register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # Set as customer
+
             profile = user.userprofile
             profile.user_type = "customer"
             profile.save()
 
-            messages.success(request, "Успешная регистрация!")
+            messages.success(request, "Регистрация прошла успешно! Добро пожаловать!")
             login(request, user)
-            return redirect("products:category_list")  # Redirect to shop
+
+            next_url = request.POST.get("next") or request.GET.get("next")
+            if next_url and url_has_allowed_host_and_scheme(
+                next_url, request.get_host()
+            ):
+                return redirect(next_url)
+
+            return redirect("products:category_list")
     else:
         form = UserCreationForm()
 
-    return render(request, "accounts/customer_register.html", {"form": form})
+    next_url = request.GET.get("next", "")
+
+    context = {
+        "form": form,
+        "next": next_url,
+    }
+    return render(request, "accounts/customer_register.html", context)
 
 
 @login_required
@@ -36,7 +51,6 @@ def profile_view(request):
     recent_orders = []
     try:
         recent_orders = Order.objects.filter(user=request.user).order_by("-created")[:5]
-        pass
     except:
         pass
 
@@ -94,17 +108,13 @@ def change_password(request):
 @login_required
 def orders_list(request):
     """View for users to see all their orders"""
-    # profile = request.user.userprofile
     orders = []
     try:
-        # Assuming you have an Order model
         orders_queryset = Order.objects.filter(user=request.user).order_by("-created")
-        #
-        # # Pagination
-        paginator = Paginator(orders_queryset, 10)  # Show 10 orders per page
+
+        paginator = Paginator(orders_queryset, 10)
         page_number = request.GET.get("page")
         orders = paginator.get_page(page_number)
-        pass
     except:
         messages.info(request, "Система заказов пока недоступна.")
 
@@ -116,23 +126,55 @@ def orders_list(request):
 
 
 def user_login(request):
+    """Enhanced login view with better redirect handling"""
+
+    if request.user.is_authenticated:
+        next_url = request.GET.get("next")
+        if next_url and url_has_allowed_host_and_scheme(next_url, request.get_host()):
+            return redirect(next_url)
+        return redirect("products:category_list")
+
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
+
         if user is not None:
             login(request, user)
-            # Redirect to next parameter if exists, otherwise to products
-            next_url = request.GET.get("next", "products:category_list")
-            return redirect(next_url)
-        else:
-            return render(
-                request, "accounts/login.html", {"error": "Неверные учетные данные"}
+
+            messages.success(
+                request, f"Добро пожаловать, {user.first_name or user.username}!"
             )
-    return render(request, "accounts/login.html")
+
+            # Handle redirect after login
+            next_url = request.POST.get("next") or request.GET.get("next")
+            if next_url and url_has_allowed_host_and_scheme(
+                next_url, request.get_host()
+            ):
+                return redirect(next_url)
+
+            return redirect("products:category_list")
+        else:
+            messages.error(
+                request, "Неверные учетные данные. Проверьте имя пользователя и пароль."
+            )
+
+    next_url = request.GET.get("next", "")
+
+    context = {
+        "next": next_url,
+    }
+    return render(request, "accounts/login.html", context)
 
 
 def user_logout(request):
+    """Enhanced logout view"""
+    username = request.user.username if request.user.is_authenticated else None
     logout(request)
-    messages.info(request, "Вы успешно вышли из системы.")
+
+    if username:
+        messages.info(request, f"До свидания, {username}! Вы успешно вышли из системы.")
+    else:
+        messages.info(request, "Вы успешно вышли из системы.")
+
     return redirect("products:category_list")

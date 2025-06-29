@@ -9,8 +9,6 @@ from django.utils.html import strip_tags
 # from django.template.loader import render_to_string
 # from django.conf import settings
 from .models import Order
-
-from .models import Order
 from .telegram import TelegramBot
 
 
@@ -86,26 +84,3 @@ def payment_received(order_id):
     # Send Telegram notification
     bot = TelegramBot()
     bot.notify_payment(order)
-
-
-@shared_task
-def send_payment_success_email(order_id):
-    order = Order.objects.get(id=order_id)
-
-    subject = f"Заказ #{order.id} оплачен"
-    html_message = render_to_string(
-        "orders/email/email_payment_success.html",
-        {
-            "order": order,
-        },
-    )
-    plain_message = strip_tags(html_message)
-
-    send_mail(
-        subject,
-        plain_message,
-        settings.DEFAULT_FROM_EMAIL,
-        [order.email],
-        html_message=html_message,
-        fail_silently=False,
-    )

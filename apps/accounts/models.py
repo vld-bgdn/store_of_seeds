@@ -30,10 +30,6 @@ class UserProfile(models.Model):
     department = models.CharField(_("Отдел"), max_length=100, blank=True)
     employee_id = models.CharField(_("Идентификатор"), max_length=20, blank=True)
 
-    # def get_user_orders(self):
-    #     """Get all orders for this user"""
-    #     return self.user.order_set.all().order_by("-created_at")
-
     @property
     def is_customer(self):
         return self.user_type == "customer"
