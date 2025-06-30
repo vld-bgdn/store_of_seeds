@@ -3,12 +3,11 @@ import os
 
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 environ.Env.read_env(BASE_DIR / ".env")
 
-# SECRET_KEY = env("SECRET_KEY")
-SECRET_KEY = "django-insecure-bh%6waax!z5f49%rvv835i5x&^zzc!z9ofo3d-p=%u+doa^c&y"
+SECRET_KEY = env("SECRET_KEY")
 
 DEBUG = env.bool("DEBUG", default=True)
 
@@ -326,11 +325,11 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_DIRS = [
-    os.path.join(
-        BASE_DIR, "static"
-    ),  # This tells Django where to look for static files
-]
+# STATICFILES_DIRS = [
+#     os.path.join(
+#         BASE_DIR, "static"
+#     ),  # This tells Django where to look for static files
+# ]
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -369,8 +368,8 @@ TELEGRAM_CHAT_ID = env("TELEGRAM_CHAT_ID", default="")
 CDEK_ACCOUNT = env("CDEK_ACCOUNT", default="")
 CDEK_SECURE_PASSWORD = env("CDEK_SECURE_PASSWORD", default="")
 
-YOOKASSA_SHOP_ID = "1110130"
-YOOKASSA_SECRET_KEY = "test_O2XwMhBBKGKQ9Sh9oCuPaMMOo8onBeJ16CN7cIEw3Dk"
+YOOKASSA_SHOP_ID = env("YOOKASSA_SHOP_ID", default="")
+YOOKASSA_SECRET_KEY = env("YOOKASSA_SECRET_KEY", default="")
 
 # Payment Redirect URLs
 YOOKASSA_SUCCESS_URL = "orders:payment_success"  # URL name for successful payment
