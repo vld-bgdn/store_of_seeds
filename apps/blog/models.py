@@ -43,7 +43,7 @@ class Article(TimeStampedModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="articles",  # This allows reverse lookup
+        related_name="articles",
     )
     content = CKEditor5Field(_("Контент"), config_name="extends")
     short_description = models.TextField(_("Короткое описание"), blank=True)

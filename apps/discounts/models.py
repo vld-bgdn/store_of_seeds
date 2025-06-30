@@ -1,9 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator
 
-# from apps.accounts.models import User
 from django.contrib.auth.models import User
 
 from django.utils import timezone
@@ -52,9 +51,11 @@ class PromoCode(TimeStampedModel):
         help_text=_("Максимально количество раз, когда можно использовать этот код"),
         default=200,
     )
-    current_uses = models.PositiveIntegerField(_("current uses"), default=0)
-    for_all_users = models.BooleanField(_("for all users"), default=True)
-    for_first_order = models.BooleanField(_("for first order only"), default=False)
+    current_uses = models.PositiveIntegerField(_("количество использований"), default=0)
+    for_all_users = models.BooleanField(
+        _("доступен для всех пользователей"), default=True
+    )
+    for_first_order = models.BooleanField(_("только для первого заказа"), default=False)
 
     class Meta:
         verbose_name = _("Промо код")

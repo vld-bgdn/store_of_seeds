@@ -24,7 +24,9 @@ class ArticleListView(ListView):
             article_count=Count("articles", filter=Q(articles__is_published=True))
         ).filter(article_count__gt=0)
 
-        popular_articles = Article.objects.filter(is_published=True).order_by("-view_count")[:5]
+        popular_articles = Article.objects.filter(is_published=True).order_by(
+            "-view_count"
+        )[:5]
 
         context["popular_articles"] = popular_articles
         return context
@@ -44,9 +46,9 @@ class ArticleDetailView(DetailView):
     def get_object(self, queryset=None):
         """Get object and increment view count"""
         obj = super().get_object(queryset)
-        # Increment view count using F() to avoid race conditions
+
         Article.objects.filter(pk=obj.pk).update(view_count=F("view_count") + 1)
-        # Refresh the object to get updated view_count
+
         obj.refresh_from_db(fields=["view_count"])
         return obj
 
@@ -54,7 +56,6 @@ class ArticleDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         article = self.object
 
-        # Get related articles from same category first, then others
         related_articles = Article.objects.filter(is_published=True).exclude(
             id=article.id
         )

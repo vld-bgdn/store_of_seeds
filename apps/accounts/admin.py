@@ -10,7 +10,7 @@ class UserProfileInline(admin.StackedInline):
     verbose_name_plural = "Профили"
 
     def get_fields(self, request, obj=None):
-        # Show different fields based on user type
+
         fields = ["user_type", "avatar", "bio"]
 
         if obj and hasattr(obj, "userprofile"):
@@ -19,7 +19,6 @@ class UserProfileInline(admin.StackedInline):
             elif obj.userprofile.is_internal_staff:
                 fields.extend(["department", "employee_id"])
         else:
-            # Show all fields when creating
             fields.extend(["phone", "address", "department", "employee_id"])
 
         return fields
@@ -100,10 +99,10 @@ class StaffUserAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        # Exclude superusers (admin accounts)
+
         return qs.filter(
             userprofile__user_type="staff",
-            is_superuser=False,  # This excludes admin accounts
+            is_superuser=False,
         )
 
     def get_department(self, obj):
@@ -131,7 +130,6 @@ class CustomerUserAdmin(BaseUserAdmin):
         "date_joined",
     )
     list_filter = ("is_active", "date_joined")
-    # list_filter = BaseUserAdmin.list_filter + ("userprofile__user_type",)
 
     search_fields = (
         "username",
@@ -141,18 +139,12 @@ class CustomerUserAdmin(BaseUserAdmin):
         "userprofile__phone",
     )
 
-    # Remove staff-related fields from fieldsets
     fieldsets = (
         (None, {"fields": ("username", "password")}),
         ("Персональная информация", {"fields": ("first_name", "last_name", "email")}),
         ("Разрешения", {"fields": ("is_active",)}),
         ("Важные даты", {"fields": ("last_login", "date_joined")}),
     )
-
-    # def get_user_type(self, obj):
-    #     return obj.userprofile.get_user_type_display()
-
-    # get_user_type.short_description = "Тип пользователя"
 
     def get_queryset(self, request):
         return super().get_queryset(request).filter(userprofile__user_type="customer")
@@ -162,25 +154,7 @@ class CustomerUserAdmin(BaseUserAdmin):
 
     get_phone.short_description = "Телефон"
 
-    # def save_model(self, request, obj, form, change):
-    #     super().save_model(request, obj, form, change)
-    #     # Ensure the user type is set correctly
-    #     if hasattr(obj, "userprofile"):
-    #         if obj.userprofile.user_type != "customer":
-    #             obj.userprofile.user_type = "customer"
-    #             obj.userprofile.save()
 
-    # def has_add_permission(self, request):
-    #     return True
-
-    # def has_change_permission(self, request, obj=None):
-    #     return True
-
-    # def has_delete_permission(self, request, obj=None):
-    #     return True
-
-
-# Register the admin classes
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(StaffUser, StaffUserAdmin)

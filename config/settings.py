@@ -115,7 +115,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "apps.accounts.middleware.UserTypeMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -132,8 +131,6 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "apps.cart.context_processors.cart",
-                "apps.reports.admin_menu.reports_menu",
-                "apps.pages.admin_menu.pages_menu",
             ],
         },
     },

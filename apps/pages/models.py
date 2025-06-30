@@ -9,13 +9,12 @@ class Page(TimeStampedModel):
 
     title = models.CharField(_("title"), max_length=200)
     slug = models.SlugField(_("slug"), max_length=200, unique=True)
-    # content = models.TextField(_("content"))
     content = CKEditor5Field(_("content"), config_name="extends")
     is_active = models.BooleanField(_("is active"), default=True)
     meta_title = models.CharField(_("meta title"), max_length=200, blank=True)
     meta_description = models.TextField(_("meta description"), blank=True)
     template_name = models.CharField(
-        _("template name"), max_length=100, default="pages/default.html"
+        _("имя шаблона"), max_length=100, default="pages/default.html"
     )
 
     class Meta:

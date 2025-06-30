@@ -1,6 +1,6 @@
-# Simple Django store app
+# Django app - Online store of seeds and equipment for growing microgreens
 The application includes:
-- Online store of seeds and equipment for growing microgreens
+- Store app
 - Admin interface for store management
 # Getting Started
 ## Prerequisites

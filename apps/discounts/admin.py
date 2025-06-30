@@ -6,7 +6,7 @@ from .models import PromoCode, PromoCodeUse
 class PromoCodeUseInline(admin.TabularInline):
     model = PromoCodeUse
     extra = 0
-    readonly_fields = ["created", "order", "discount_amount"]  # "user",
+    readonly_fields = ["created", "order", "discount_amount", "user"]
     can_delete = False
 
 
@@ -19,13 +19,13 @@ class PromoCodeAdmin(admin.ModelAdmin):
         "valid_from",
         "valid_to",
         "active",
-        # "usage_count",
+        "current_uses",
     ]
     list_filter = ["discount_type", "active"]
     search_fields = ["code"]
-    # readonly_fields = ["usage_count"]
+    readonly_fields = ["current_uses"]
     inlines = [PromoCodeUseInline]
-    actions = ["mark_as_active", "mark_as_inactive"]  # List of action names
+    actions = ["mark_as_active", "mark_as_inactive"]
 
     def mark_as_active(self, request, queryset):
         queryset.update(active=True)
@@ -40,7 +40,13 @@ class PromoCodeAdmin(admin.ModelAdmin):
 
 @admin.register(PromoCodeUse)
 class PromoCodeUseAdmin(admin.ModelAdmin):
-    list_display = ["promo_code", "order", "discount_amount", "created"]  # "user",
+    list_display = [
+        "promo_code",
+        "order",
+        "discount_amount",
+        "created",
+        "user",
+    ]
     list_filter = ["promo_code"]
     search_fields = ["promo_code__code", "user__email", "order__id"]
     readonly_fields = ["created", "modified"]

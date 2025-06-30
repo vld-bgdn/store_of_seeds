@@ -27,7 +27,7 @@ class OrderAdmin(admin.ModelAdmin):
         "status",
         "payment_status",
         "total_cost",
-        "order_actions",  # Changed from "actions" to "order_actions"
+        "order_actions",
     ]
     list_filter = [
         "status",

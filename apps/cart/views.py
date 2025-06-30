@@ -44,7 +44,9 @@ def apply_promo_code(request):
                     cart.remove_promo_code()
                     messages.error(
                         request,
-                        _("Промокод больше не действует"),
+                        _(
+                            "Промокод не сработал, возможно он истек или недостаточная сумма заказа"
+                        ),
                     )
             except PromoCode.DoesNotExist:
                 cart.remove_promo_code()

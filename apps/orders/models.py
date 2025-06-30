@@ -2,7 +2,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel
 
-# from apps.accounts.models import User
 from django.contrib.auth.models import User
 
 from apps.products.models import Product
@@ -13,7 +12,7 @@ class Order(TimeStampedModel):
 
     class Status(models.TextChoices):
         NEW = "new", _("Новый")
-        PROCESSING = "processing", _("В процессе")
+        PROCESSING = "processing", _("В работе")
         SHIPPED = "shipped", _("Отправлен")
         DELIVERED = "delivered", _("Доставлен")
         COMPLETED = "completed", _("Завершен")
@@ -70,25 +69,21 @@ class Order(TimeStampedModel):
         _("итого"), max_digits=10, decimal_places=2, default=0
     )
 
-    # Contact information
     first_name = models.CharField(_("имя"), max_length=100)
     last_name = models.CharField(_("фамилия"), max_length=100)
     email = models.EmailField(_("адрес электронной почты"))
     phone = models.CharField(_("номер телефона"), max_length=20)
 
-    # Delivery information
     address = models.TextField(_("адрес"), blank=True)
     postal_code = models.CharField(_("индекс"), max_length=20, blank=True)
     city = models.CharField(_("город"), max_length=100, blank=True)
     country = models.CharField(_("страна"), max_length=100, blank=True)
 
-    # CDEK specific fields
     cdek_point_id = models.CharField(
         _("СДЭК ПВЗ ID point ID"), max_length=50, blank=True
     )
     cdek_point_address = models.TextField(_("СДЭК ПВЗ адрес"), blank=True)
 
-    # Additional fields
     need_consultation = models.BooleanField(_("нужна консультация"), default=False)
     notes = models.TextField(_("примечание к заказу"), blank=True)
 
@@ -103,13 +98,6 @@ class Order(TimeStampedModel):
         _("размер скидки"), max_digits=10, decimal_places=2, default=0
     )
 
-    # @property
-    # def total(self):
-    #     return self.subtotal - self.discount_amount
-
-    # def subtotal(self):
-    #     return sum(item.cost for item in self.items.all())
-
     @property
     def subtotal(self):
         return sum(item.price * item.quantity for item in self.items.all())
@@ -121,15 +109,7 @@ class Order(TimeStampedModel):
         return self.subtotal + self.delivery_cost
 
     def calculate_total(self):
-        # subtotal = sum(item.cost for item in self.items.all())
         return self.subtotal - self.discount_amount + self.delivery_cost
-
-    # def calculate_total(self):
-    #     return sum(item.cost for item in self.items.all()) + self.delivery_cost
-
-    # @property
-    # def total_quantity(self):
-    #     return sum(item.quantity for item in self.items.all())
 
     def save(self, *args, **kwargs):
         if not hasattr(self, "discount_amount") or not self.discount_amount:
@@ -137,27 +117,7 @@ class Order(TimeStampedModel):
                 self.discount_amount = self.promo_code.apply_discount(self.subtotal)
             else:
                 self.discount_amount = 0
-        # if not self.total_cost:
-        #     self.total_cost = self.calculate_total()
         super().save(*args, **kwargs)
-
-    # def save(self, *args, **kwargs):
-    #     # Set discount amount first
-    #     if not hasattr(self, "discount_amount") or not self.discount_amount:
-    #         if self.promo_code:
-    #             self.discount_amount = self.promo_code.apply_discount(self.subtotal)
-    #         else:
-    #             self.discount_amount = 0
-
-    #     # Save first to get primary key
-    #     is_new = self.pk is None
-    #     super().save(*args, **kwargs)
-
-    #     # Now calculate total if it's a new order or total_cost is not set
-    #     if is_new or not self.total_cost:
-    #         self.total_cost = self.calculate_total()
-    #         # Update without triggering save again
-    #         Order.objects.filter(pk=self.pk).update(total_cost=self.total_cost)
 
     payment_id = models.CharField(
         max_length=100, blank=True, verbose_name="ID оплаты в Yookassa"

@@ -4,9 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from .models import Article, ArticleCategory
 
 
-class ArticleInline(
-    admin.TabularInline
-):  # Changed to TabularInline for better performance
+class ArticleInline(admin.TabularInline):
     model = Article
     extra = 0
     fields = ["title", "slug", "is_published"]
@@ -22,7 +20,7 @@ class ArticleCategoryAdmin(admin.ModelAdmin):
     search_fields = ["name", "description"]
 
     def article_count(self, obj):
-        return obj.articles.count()  # Using related_name "articles"
+        return obj.articles.count()
 
     article_count.short_description = _("Количество")
 

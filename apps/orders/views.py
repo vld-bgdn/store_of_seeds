@@ -1,4 +1,3 @@
-# apps/orders/views.py
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView, DetailView
 from django.urls import reverse_lazy
