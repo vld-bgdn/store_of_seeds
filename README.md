@@ -10,7 +10,7 @@ The application includes:
 - Redis
 - Docker
 
-# Modules
+# External modules
 - yookassa (for payment integration)
 - django-ckeditor-5 (editor for the blog and pages apps)
 
@@ -74,14 +74,14 @@ EOL
 | `DEFAULT_FROM_EMAIL`     | default email address for FROM field                                                              |
 | `SECRET_KEY`             | secretkey to protect signed data in the Django                                                    |
 | `CELERY_BROKER_URL`      | redis url for celery. Example: `redis://localhost:6379/0`                                         |
-| `CELERY_RESULT_BACKEND`  | redist url for celery results. Example: `redis://localhost:6379/1`                                |
+| `CELERY_RESULT_BACKEND`  | redis url for celery results. Example: `redis://localhost:6379/1`                                |
 | `YOOKASSA_SHOP_ID`       | yookassa shop id for payment. Get it on the yookassa account: `https://yookassa.ru/my/profile`    |
 | `YOOKASSA_SECRET_KEY`    | yookassa secret key for payment. Get it on the yookassa account: `https://yookassa.ru/my/profile` |
 
 To generate django secret key use following command:
 
 ```
-python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())
+python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
 ```
 - Set up the database:
 ```
