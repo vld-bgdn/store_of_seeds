@@ -1,0 +1,9 @@
+[flake8]
+exclude =
+    migrations
+    aa-migration-old
+    __pycache__
+    manage.py
+    settings.py
+    env
+    .venv

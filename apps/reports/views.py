@@ -1,10 +1,9 @@
 from django.views.generic import ListView, DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse
 from django.utils import timezone
 from datetime import timedelta
-from django.db.models import Sum, Count
+from django.db.models import Sum
 from apps.orders.models import Order
 from apps.products.models import Product
 
