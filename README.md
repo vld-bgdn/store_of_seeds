@@ -139,3 +139,6 @@ docker-compose up -d
     ├── products
     └── reports
 ```
+
+# License
+MIT License © vld-bgdn
