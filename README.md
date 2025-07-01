@@ -2,6 +2,18 @@
 The application includes:
 - Store app
 - Admin interface for store management
+
+# Technologies
+- Django
+- PostgreSQL
+- Celery
+- Redis
+- Docker
+
+# Modules
+- yookassa (for payment integration)
+- django-ckeditor-5 (editor for the blog and pages apps)
+
 # Getting Started
 ## Prerequisites
 - Python 3.11 or higher
@@ -46,6 +58,31 @@ YOOKASSA_SHOP_ID=""
 YOOKASSA_SECRET_KEY=""
 EOL
 ```
+### ENV descriptions
+| Name                     | Description                                                                                       |
+|--------------------------|---------------------------------------------------------------------------------------------------|
+| `DB_HOST`                | database host. Example: localhost                                                                 |
+| `POSTGRES_DB`            | database name                                                                                     |
+| `POSTGRES_USER`          | database user                                                                                     |
+| `POSTGRES_PASSWORD`      | database password                                                                                 |
+| `EMAIL_HOST`             | email host. Example: smtp.yandex.ru                                                               |
+| `EMAIL_PORT`             | email server port. Example: 465                                                                   |
+| `EMAIL_USE_TLS`          | email server TLS option, boolean. Example: False                                                  |
+| `EMAIL_USE_SSL`          | email server SSL option, boolean. Example: True                                                   |
+| `EMAIL_HOST_USER`        | username to access the email server. Example: no-reply@domain.com                                 |
+| `EMAIL_HOST_PASSWORD`    | user password to access the email server                                                          |
+| `DEFAULT_FROM_EMAIL`     | default email address for FROM field                                                              |
+| `SECRET_KEY`             | secretkey to protect signed data in the Django                                                    |
+| `CELERY_BROKER_URL`      | redis url for celery. Example: `redis://localhost:6379/0`                                         |
+| `CELERY_RESULT_BACKEND`  | redist url for celery results. Example: `redis://localhost:6379/1`                                |
+| `YOOKASSA_SHOP_ID`       | yookassa shop id for payment. Get it on the yookassa account: `https://yookassa.ru/my/profile`    |
+| `YOOKASSA_SECRET_KEY`    | yookassa secret key for payment. Get it on the yookassa account: `https://yookassa.ru/my/profile` |
+
+To generate django secret key use following command:
+
+```
+python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())
+```
 - Set up the database:
 ```
 docker-compose up -d db
@@ -54,6 +91,10 @@ python manage.py migrate
 - Create a superuser:
 ```
 python manage.py createsuperuser
+```
+Filling the DB with test data
+```
+python manage.py test_data
 ```
 - Build and start all app services via docker
 ```
