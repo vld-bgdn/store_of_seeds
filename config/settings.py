@@ -48,7 +48,7 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Добро пожаловать в МикроСад",
     # Copyright on the footer
     "copyright": "МикроСад",
-    "user_avatar": "avatar",
+    "user_avatar": "user.userprofile.avatar",
     ############
     # Top Menu #
     ############
@@ -322,23 +322,11 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-# STATICFILES_DIRS = [
-#     os.path.join(
-#         BASE_DIR, "static"
-#     ),  # This tells Django where to look for static files
-# ]
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# AUTH_USER_MODEL = "accounts.CustomUser"
-# AUTH_USER_MODEL = "accounts.UserProfile"
-# AUTH_USER_MODEL = "users.User"
-
-# LOGIN_REDIRECT_URL = "products:category_list"
-# LOGOUT_REDIRECT_URL = "products:category_list"
 
 # Celery settings
 CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://localhost:6379/0")
@@ -362,16 +350,13 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="")
 TELEGRAM_BOT_TOKEN = env("TELEGRAM_BOT_TOKEN", default="")
 TELEGRAM_CHAT_ID = env("TELEGRAM_CHAT_ID", default="")
 
-CDEK_ACCOUNT = env("CDEK_ACCOUNT", default="")
-CDEK_SECURE_PASSWORD = env("CDEK_SECURE_PASSWORD", default="")
-
+# Yookassa settings
 YOOKASSA_SHOP_ID = env("YOOKASSA_SHOP_ID", default="")
 YOOKASSA_SECRET_KEY = env("YOOKASSA_SECRET_KEY", default="")
+YOOKASSA_SUCCESS_URL = "orders:payment_success"
+YOOKASSA_FAILURE_URL = "orders:payment_failure"
 
-# Payment Redirect URLs
-YOOKASSA_SUCCESS_URL = "orders:payment_success"  # URL name for successful payment
-YOOKASSA_FAILURE_URL = "orders:payment_failure"  # URL name for failed payment
-
+# Security settings
 SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
 SESSION_COOKIE_HTTPONLY = True
 
