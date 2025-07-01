@@ -3,7 +3,7 @@ The application includes:
 - Store app
 - Admin interface for store management
 
-# Functionality
+## Functionality
 - Product catalog with categories
 - Product filtering
 - Search by product, price, cultivation difficulty
@@ -16,14 +16,14 @@ The application includes:
 - Information pages
 - Blog with articles on products displaying popular articles
 
-# Technologies
+## Technologies
 - Django
 - PostgreSQL
 - Celery
 - Redis
 - Docker
 
-# External modules
+## External modules
 - yookassa (for payment integration)
 - django-ckeditor-5 (editor for the blog and pages apps)
 
