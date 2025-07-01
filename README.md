@@ -3,6 +3,19 @@ The application includes:
 - Store app
 - Admin interface for store management
 
+# Functionality
+- Product catalog with categories
+- Product filtering
+- Search by product, price, cultivation difficulty
+- Cart for order formation
+- Promo codes for purchase (discount percentage, fixed discount, number of uses, minimum price for using a promo code)
+- Payment for goods via Yookassa, webhook accepts a response from Yookassa
+- Email notification about order status
+- Login and registration (setting up access depending on user type)
+- User profile (password change, recent orders, credentials, employee and customer profiles)
+- Information pages
+- Blog with articles on products displaying popular articles
+
 # Technologies
 - Django
 - PostgreSQL
