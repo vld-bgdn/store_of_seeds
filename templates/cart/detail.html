@@ -53,6 +53,7 @@
 
         <div class="col-md-4">
             <!-- Promo Code Section - Updated -->
+            {% if user.is_authenticated %}
             <div class="card mb-3">
                 <div class="card-header">
                     Промо код
@@ -82,7 +83,7 @@
                     </form>
                 </div>
             </div>
-
+            {% endif %}
             <!-- Order Summary -->
             <div class="card">
                 <div class="card-header">
