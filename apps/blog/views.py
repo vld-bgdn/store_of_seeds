@@ -67,6 +67,11 @@ class ArticleDetailView(DetailView):
             article_count=Count("articles", filter=Q(articles__is_published=True))
         ).filter(article_count__gt=0)
 
+        popular_articles = Article.objects.filter(is_published=True).order_by(
+            "-view_count"
+        )[:5]
+        context["popular_articles"] = popular_articles
+
         return context
 
 
