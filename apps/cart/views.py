@@ -64,12 +64,21 @@ def cart_add(request, product_id):
     cart = Cart.objects.get_or_create_cart(request)
     product = get_object_or_404(Product, id=product_id)
 
+    try:
+        quantity = int(request.POST.get("quantity", 1))
+        if quantity < 1:
+            quantity = 1
+    except ValueError:
+        quantity = 1
+
     cart_item, created = CartItem.objects.get_or_create(
-        cart=cart, product=product, defaults={"price": product.price}
+        cart=cart,
+        product=product,
+        defaults={"price": product.price, "quantity": quantity},
     )
 
     if not created:
-        cart_item.quantity += 1
+        cart_item.quantity += quantity
         cart_item.save()
 
     messages.success(request, _("Продукт добавлен в корзину"))
