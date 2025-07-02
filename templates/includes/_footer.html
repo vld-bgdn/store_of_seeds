@@ -23,17 +23,17 @@
                 <h6>Информация</h6>
                 <ul class="list-unstyled">
                     <li><a href="{% url 'pages:page_detail' slug='o-nas' %}" class="text-decoration-none text-muted">О нас</a></li>
-                    <li><a href="#" class="text-decoration-none text-muted">Блог</a></li>
-                    <li><a href="#" class="text-decoration-none text-muted">Доставка</a></li>
-                    <li><a href="#" class="text-decoration-none text-muted">Контакты</a></li>
+                    <li><a href="{% url 'blog:article_list' %}" class="text-decoration-none text-muted">Блог</a></li>
+                    <li><a href="{% url 'pages:page_detail' slug='dostavka-i-oplata' %}" class="text-decoration-none text-muted">Доставка</a></li>
+                    <li><a href="{% url 'pages:page_detail' slug='kontakty' %}" class="text-decoration-none text-muted">Контакты</a></li>
                 </ul>
             </div>
 
             <div class="col-md-2 mb-3">
                 <h6>Поддержка</h6>
                 <ul class="list-unstyled">
-                    <li><a href="#" class="text-decoration-none text-muted">FAQ</a></li>
-                    <li><a href="#" class="text-decoration-none text-muted">Возврат</a></li>
-                    <li><a href="{% url 'pages:page_detail' slug='garantiya' %}" class="text-decoration-none text-muted">Гарантия</a></li>
+                    <li><a href="{% url 'pages:page_detail' slug='faq' %}" class="text-decoration-none text-muted">FAQ</a></li>
+                    <li><a href="{% url 'pages:page_detail' slug='vozvrat-tovara' %}" class="text-decoration-none text-muted">Возврат</a></li>
+                    <li><a href="{% url 'pages:page_detail' slug='garantii-kachestva' %}" class="text-decoration-none text-muted">Гарантия</a></li>
                 </ul>
             </div>

@@ -75,6 +75,12 @@ class Product(TimeStampedModel):
     )
     harvest_dates = models.CharField(_("дата сбора"), max_length=100, blank=True)
 
+    @property
+    def is_microgreens(self):
+        return self.category.slug == "microgreens-seeds" or (
+            self.category.parent and self.category.parent.slug == "microgreens-seeds"
+        )
+
     class Meta:
         verbose_name = _("Продукт")
         verbose_name_plural = _("Продукты")

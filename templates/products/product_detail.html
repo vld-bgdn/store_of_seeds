@@ -96,6 +96,7 @@
                     Описание
                 </button>
             </li>
+            {% if product.is_microgreens %}
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="characteristics-tab" data-bs-toggle="tab" data-bs-target="#characteristics"
                     type="button" role="tab">
@@ -108,6 +109,7 @@
                     Выращивание
                 </button>
             </li>
+            {% endif %}
         </ul>
 
         <div class="tab-content p-3 border border-top-0 rounded-bottom">
