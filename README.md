@@ -37,18 +37,17 @@ The application includes:
 git clone https://github.com/vld-bgdn/store_of_seeds.git
 cd store_of_seeds
 ```
-- Install dependencies using Poetry:
+- Create and activate the virtual environment
+```
+python -m venv .venv; source .venv/bin/activate
+```
 - Install Poetry if you don't have it already
 ```
-curl -sSL https://install.python-poetry.org | python3 -
+python3 -m pip install poetry
 ```
-- Install project dependencies
+- Install project dependencies using Poetry:
 ```
 poetry install
-```
-- Activate the virtual environment:
-```
-poetry shell
 ```
 - Set up env file for app (use your own values)
 ```
@@ -95,6 +94,10 @@ To generate django secret key use following command:
 
 ```
 python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
+```
+- Apply .env file
+```
+set -a; . ./.env; set +a
 ```
 - Set up the database:
 ```
