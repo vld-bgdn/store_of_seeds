@@ -21,7 +21,7 @@
         <tr>
             <td>{{ item.product.name }}</td>
             <td>{{ item.quantity }}</td>
-            <td>{{ item.total_price }} ₽</td>
+            <td>{{ item.cost }} ₽</td>
         </tr>
         {% endfor %}
         <tr>
@@ -39,7 +39,7 @@
     <p>Email: {{ order.email }}</p>
     <p>Телефон: {{ order.phone }}</p>
 
-    <p>Мы свяжемся с вами для подтверждения заказа.</p>
+    <p>Заказ будет подтвержден после оплаты.</p>
 </body>
 
 </html>
