@@ -13,7 +13,11 @@ DEBUG = env.bool("DEBUG", default=True)
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 
-CSRF_TRUSTED_ORIGINS = ["https://*.ngrok-free.app"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.ngrok-free.app",
+    "https://microsad.lab.bgdn.xyz",
+    "https://www.microsad.lab.bgdn.xyz",
+]
 
 INSTALLED_APPS = [
     "jazzmin",
