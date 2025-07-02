@@ -27,9 +27,12 @@
                                 <td>{{ item.product.name }}</td>
                                 <td>
                                     <form action="{% url 'cart:cart_update' item.product.id %}" method="post">
-                                        {% csrf_token %}
-                                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
-                                        <button class="btn btn-primary" type="submit">Обновить</button>
+                                        <div class="input-group mb-3">
+                                            {% csrf_token %}
+                                            <input type="number" name="quantity" class="form-control" value="{{ item.quantity }}" min="1">
+                                            <button class="btn btn-primary" type="submit">Обновить</button>
+                                            </button>
+                                        </div>
                                     </form>
                                 </td>
                                 <td>{{ item.price }} ₽</td>
@@ -111,9 +114,9 @@
                     <div class="text-center">
                         <p class="mb-3">
                             Для оформления заказа необходимо
-                            <a href="{% url 'accounts:login' %}?next={% url 'orders:order_create' %}" class="btn btn-link p-0 align-baseline">войти в систему</a> 
+                            <a href="{% url 'accounts:login' %}?next={% url 'cart:cart_detail' %}" class="btn btn-link p-0 align-baseline">войти в систему</a>
                             или
-                            <a href="{% url 'accounts:customer_register' %}?next={% url 'orders:order_create' %}" class="btn btn-link p-0 align-baseline">зарегистрироваться</a>
+                            <a href="{% url 'accounts:customer_register' %}?next={% url 'cart:cart_detail' %}" class="btn btn-link p-0 align-baseline">зарегистрироваться</a>
                         </p>
                     </div>
                     {% endif %}
