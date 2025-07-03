@@ -29,30 +29,28 @@
     </div>
     {% endif %}
 
-    <h2>Заказ</h2>
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-        <thead>
-            <tr style="background-color: #f8f9fa;">
-                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Продукт</th>
-                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Количество</th>
-                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Цена</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in order.items.all %}
-            <tr>
-                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.product.name }}</td>
-                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.quantity }}</td>
-                <td style="padding: 10px; border: 1px solid #ddd;">{{ item.total_price }} ₽</td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td colspan="2" style="padding: 10px; border: 1px solid #ddd; text-align: right;">
-                    <strong>Total:</strong>
-                </td>
-                <td style="padding: 10px; border: 1px solid #ddd;"><strong>{{ order.calculate_total }} ₽</strong></td>
-            </tr>
-        </tbody>
+    <h2>Детали заказа:</h2>
+    <table>
+        <tr>
+            <th>Товар</th>
+            <th>Количество</th>
+            <th>Цена</th>
+        </tr>
+        {% for item in order.items.all %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.cost }} ₽</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2"><strong>Доставка:</strong></td>
+            <td>{{ order.delivery_cost }} ₽</td>
+        </tr>
+        <tr>
+            <td colspan="2"><strong>Итого:</strong></td>
+            <td>{{ order.total_cost }} ₽</td>
+        </tr>
     </table>
 
     <p>Спасибо за покупку!</p>
