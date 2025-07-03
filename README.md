@@ -118,43 +118,5 @@ docker-compose up -d
 ```
 - Visit http://127.0.0.1:8000/ in your browser to see the application.
 
-# Project folder structure
-```
-├── apps
-│   ├── accounts
-│   │   └── migrations
-│   ├── blog
-│   │   └── migrations
-│   ├── cart
-│   │   └── migrations
-│   ├── discounts
-│   │   └── migrations
-│   ├── orders
-│   │   └── migrations
-│   ├── pages
-│   │   └── migrations
-│   ├── products
-│   │   ├── migrations
-│   │   └── templatetags
-│   └── reports
-│       └── migrations
-├── config
-├── media
-│   ├── avatars
-│   ├── categories
-│   └── products
-├── static
-└── templates
-    ├── accounts
-    ├── blog
-    ├── cart
-    ├── includes
-    ├── orders
-    │   └── email
-    ├── pages
-    ├── products
-    └── reports
-```
-
 # License
 MIT License © vld-bgdn
