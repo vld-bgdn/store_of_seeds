@@ -1,46 +1,316 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Заказ #{{ order.id }}{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <h1 class="mb-4">Заказ #{{ order.id }}</h1>
+<div class="container mt-4">
     <div class="row">
-        <div class="col-md-8">
-            <!-- Order details remain the same -->
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header">Сумма заказа</div>
+        <div class="col-12">
+            <!-- Order Header -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4><i class="fas fa-receipt me-2"></i>Заказ #{{ order.id }}</h4>
+                        <div>
+                            {% if order.status == 'pending' %}
+                            <span class="badge bg-warning text-dark">В обработке</span>
+                            {% elif order.status == 'confirmed' %}
+                            <span class="badge bg-info">Подтвержден</span>
+                            {% elif order.status == 'shipped' %}
+                            <span class="badge bg-primary">Отправлен</span>
+                            {% elif order.status == 'delivered' %}
+                            <span class="badge bg-success">Доставлен</span>
+                            {% elif order.status == 'cancelled' %}
+                            <span class="badge bg-danger">Отменен</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ order.get_status_display }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body">
-                    <ul class="list-group list-group-flush mb-3">
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Сумма</span>
-                            <span>{{ order.total_cost }} ₽</span>
-                        </li>
-                        {% if order.promo_code %}
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Скидка ({{ order.promo_code.code }})</span>
-                            <span class="text-danger">-{{ order.discount_amount }} ₽</span>
-                        </li>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-calendar me-2"></i>Дата заказа</h6>
+                            <p class="text-muted">{{ order.created|date:"d.m.Y H:i" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-user me-2"></i>Покупатель</h6>
+                            <p class="text-muted">{{ order.first_name }} {{ order.last_name }}</p>
+                        </div>
+                        {% if order.email %}
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-envelope me-2"></i>Email</h6>
+                            <p class="text-muted">{{ order.email }}</p>
+                        </div>
                         {% endif %}
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Доставка</span>
-                            <span>{{ order.delivery_cost }} ₽</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <strong>Итого</strong>
-                            <strong>{{ order.total_with_discount }} ₽</strong>
-                        </li>
-                    </ul>
-                    {% if order.promo_code %}
-                    <div class="alert alert-success">
-                        Промо код <strong>{{ order.promo_code.code }}</strong> был применен
+                        {% if order.phone %}
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-phone me-2"></i>Телефон</h6>
+                            <p class="text-muted">{{ order.phone }}</p>
+                        </div>
+                        {% endif %}
+                        {% if order.address %}
+                        <div class="col-12">
+                            <h6><i class="fas fa-map-marker-alt me-2"></i>Адрес доставки</h6>
+                            <p class="text-muted">{{ order.address }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Order Items -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-shopping-cart me-2"></i>Товары в заказе</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if order.items.all %}
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Товар</th>
+                                            <th>Цена</th>
+                                            <th>Количество</th>
+                                            <th>Сумма</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in order.items.all %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    {% if item.product.image %}
+                                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                                                         class="me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                                    {% else %}
+                                                    <div class="bg-light border rounded me-3 d-flex align-items-center justify-content-center"
+                                                         style="width: 50px; height: 50px;">
+                                                        <i class="fas fa-image text-muted"></i>
+                                                    </div>
+                                                    {% endif %}
+                                                    <div>
+                                                        <h6 class="mb-1">{{ item.product.name }}</h6>
+                                                        {% if item.product.category %}
+                                                        <small class="text-muted">{{ item.product.category.name }}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <strong>{{ item.price }} ₽</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">{{ item.quantity }} шт.</span>
+                                            </td>
+                                            <td>
+                                                <strong>{{ item.cost }} ₽</strong>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">Товары в заказе не найдены</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if order.notes %}
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h6><i class="fas fa-sticky-note me-2"></i>Примечания к заказу</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-0">{{ order.notes }}</p>
+                        </div>
                     </div>
                     {% endif %}
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-calculator me-2"></i>Сумма заказа</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span><i class="fas fa-shopping-basket me-2"></i>Товары ({{ order.items.count }} шт.)</span>
+                                    <span><strong>{{ order.total_cost }} ₽</strong></span>
+                                </li>
+                                {% if order.promo_code %}
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span><i class="fas fa-tag me-2"></i>Скидка ({{ order.promo_code.code }})</span>
+                                    <span class="text-danger"><strong>-{{ order.discount_amount }} ₽</strong></span>
+                                </li>
+                                {% endif %}
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span><i class="fas fa-truck me-2"></i>Доставка</span>
+                                    <span><strong>{{ order.delivery_cost }} ₽</strong></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0 border-top">
+                                    <span class="fw-bold"><i class="fas fa-receipt me-2"></i>Итого к оплате</span>
+                                    <span class="fw-bold fs-5 text-primary">{{ order.total_with_discount }} ₽</span>
+                                </li>
+                            </ul>
+
+                            {% if order.promo_code %}
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <strong>Промо-код применен!</strong><br>
+                                <small>Код: <strong>{{ order.promo_code.code }}</strong></small>
+                            </div>
+                            {% endif %}
+
+                            <div class="d-grid gap-2 mt-3">
+                                <a href="{% url 'accounts:orders_list' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Вернуться к заказам
+                                </a>
+                                {% if order.status == 'new' %}
+                                <button class="btn btn-outline-danger" onclick="cancelOrder({{ order.id }})">
+                                    <i class="fas fa-times me-2"></i>Отменить заказ
+                                </button>
+                                {% endif %}
+                                {% if order.status == 'delivered' %}
+                                <button class="btn btn-success" disabled>
+                                    <i class="fas fa-check me-2"></i>Заказ доставлен
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Timeline -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h6><i class="fas fa-history me-2"></i>Статус заказа</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="timeline">
+                                <div class="timeline-item {% if order.status == 'pending' %}active{% endif %}">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">В обработке</h6>
+                                        <small class="text-muted">{{ order.created|date:"d.m.Y H:i" }}</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item {% if order.status == 'confirmed' %}active{% endif %}">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Подтвержден</h6>
+                                        <small class="text-muted">{% if order.status == 'confirmed' %}{{ order.updated|date:"d.m.Y H:i" }}{% endif %}</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item {% if order.status == 'shipped' %}active{% endif %}">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Отправлен</h6>
+                                        <small class="text-muted">{% if order.status == 'shipped' %}{{ order.updated|date:"d.m.Y H:i" }}{% endif %}</small>
+                                    </div>
+                                </div>
+                                <div class="timeline-item {% if order.status == 'delivered' %}active{% endif %}">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Доставлен</h6>
+                                        <small class="text-muted">{% if order.status == 'delivered' %}{{ order.updated|date:"d.m.Y H:i" }}{% endif %}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+    .badge {
+        font-size: 0.8em;
+    }
+
+    .table th {
+        font-weight: 600;
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    .timeline-item:not(:last-child):before {
+        content: '';
+        position: absolute;
+        left: -22px;
+        top: 20px;
+        width: 2px;
+        height: calc(100% - 10px);
+        background-color: #dee2e6;
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: -26px;
+        top: 5px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #dee2e6;
+        border: 2px solid #fff;
+    }
+
+    .timeline-item.active .timeline-marker {
+        background-color: #007bff;
+    }
+
+    .timeline-item.active h6 {
+        color: #007bff;
+    }
+
+    .list-group-item {
+        border-left: none;
+        border-right: none;
+    }
+
+    .list-group-item:first-child {
+        border-top: none;
+    }
+
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function cancelOrder(orderId) {
+    if (confirm('Вы уверены, что хотите отменить этот заказ?')) {
+        alert('Функция отмены заказа будет реализована позже');
+    }
+}
+</script>
 {% endblock %}
