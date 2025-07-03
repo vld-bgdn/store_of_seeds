@@ -175,8 +175,8 @@
                     <div class="card bg-success text-white">
                         <div class="card-body text-center">
                             <i class="fas fa-check-circle fa-2x mb-2"></i>
-                            <h5>Доставлено</h5>
-                            <h3>0</h3> <!-- You can calculate this from your orders -->
+                            <h5>Завершен</h5>
+                            <h3>{{ completed_count }}</h3>
                         </div>
                     </div>
                 </div>
@@ -185,7 +185,7 @@
                         <div class="card-body text-center">
                             <i class="fas fa-clock fa-2x mb-2"></i>
                             <h5>В обработке</h5>
-                            <h3>0</h3> <!-- You can calculate this from your orders -->
+                            <h3>{{ processing_count }}</h3>
                         </div>
                     </div>
                 </div>

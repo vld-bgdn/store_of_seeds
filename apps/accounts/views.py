@@ -124,8 +124,20 @@ def change_password(request):
 def orders_list(request):
     """View for users to see all their orders"""
     orders = []
+    completed_count = 0
+    processing_count = 0
+
     try:
         orders_queryset = Order.objects.filter(user=request.user).order_by("-created")
+
+        completed_count = orders_queryset.filter(status=Order.Status.COMPLETED).count()
+        processing_count = orders_queryset.filter(
+            status__in=[
+                Order.Status.PROCESSING,
+                Order.Status.SHIPPED,
+                Order.Status.DELIVERED,
+            ]
+        ).count()
 
         paginator = Paginator(orders_queryset, 10)
         page_number = request.GET.get("page")
@@ -135,6 +147,8 @@ def orders_list(request):
 
     context = {
         "orders": orders,
+        "completed_count": completed_count,
+        "processing_count": processing_count,
     }
 
     return render(request, "accounts/orders_list.html", context)
